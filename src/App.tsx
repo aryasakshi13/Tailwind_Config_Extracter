@@ -3,7 +3,25 @@ import './index.css';
 
 
 function App() {
-  const [count, setCount] = useState(0)
+
+  const[detectedBg, setDetectedBg] = useState<string | null>(null);
+  
+  const pingWebpageDom = async () =>{
+     const[activeTab] = await chrome.tabs.query({active: true, currentWindow: true});
+
+     if(!activeTab || !activeTab.id){
+       return ;
+     }
+
+     chrome.tabs.sendMessage(activeTab.id,{action:"PING_DOM"}, (response)  =>{
+
+         if(response && response.status === "success") {
+            setDetectedBg(response.backgroundColor);
+         } else{
+           console.log("Communication failed. Ensure you are on a live website");
+         }
+     });
+  }
 
   return (
     <>
