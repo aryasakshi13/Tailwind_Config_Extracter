@@ -48,3 +48,37 @@ function rgbToHex(rgbStr: string): string | null {
 
      return '#${r}${g}${b}'.toLowerCase();
 }
+
+chrome.runtime.onMessage.addListener((message, sender, sendreesponse) =>{
+     if(message.action === "PING_DOM"){
+         const uniqueColors = new Set<String>();
+
+         const allElements = document.querySelectorAll("*");
+
+         allElements.forEach((element) =>{
+             const styles = window.getComputedStyle(element);
+             const bg = styles.backgroundColor ;
+             const text = styles.color;
+
+             if(bg){
+                const hexBg = rgbToHex(bg);
+                if(hexBg && hexBg !== "#ffffff" && hexBg !== "#000000"){
+                    uniqueColors.add(hexBg);
+                }
+             }
+
+             if(text){
+                const hextText = rgbToHex(text);
+                 if(hextText){
+                    uniqueColors.add(hextText);
+                 }
+             }
+         });
+
+         sendreesponse({
+            status: "success",
+            colors: Array.from(uniqueColors).slice(0,12)
+         });
+     }
+      return true ;
+})
