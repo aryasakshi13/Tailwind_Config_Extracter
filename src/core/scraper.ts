@@ -46,12 +46,15 @@ function rgbToHex(rgbStr: string): string | null {
      const g = parseInt(match[1]).toString(16).padStart(2, '0');
       const b= parseInt(match[2]).toString(16).padStart(2, '0');
 
-     return '#${r}${g}${b}'.toLowerCase();
+     return `#${r}${g}${b}`.toLowerCase();
 }
 
-chrome.runtime.onMessage.addListener((message, sender, sendreesponse) =>{
+chrome.runtime.onMessage.addListener((message, sender, sendresponse) =>{
      if(message.action === "PING_DOM"){
-         const uniqueColors = new Set<String>();
+
+        console.log("Analyzing actual webpage layout elements...");
+
+         const uniqueColors = new Set<string>();
 
          const allElements = document.querySelectorAll("*");
 
@@ -75,10 +78,13 @@ chrome.runtime.onMessage.addListener((message, sender, sendreesponse) =>{
              }
          });
 
-         sendreesponse({
+         sendresponse({
             status: "success",
             colors: Array.from(uniqueColors).slice(0,12)
          });
      }
       return true ;
 })
+
+
+
