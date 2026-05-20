@@ -10,5 +10,15 @@
     "activeTab",
     "scripting",
     "storage"
-  ]
+  ],
+    "background": {
+        "service_worker": "src/core/background.ts",
+        "type": "module"
+    },
+    "content_scripts": [
+        {
+        "matches": ["<all_urls>"],
+        "js": ["src/core/scraper.ts"]
+        }
+    ]
 }
