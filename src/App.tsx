@@ -1,12 +1,14 @@
 import { useState } from 'react'
 import './index.css';
 
-
+type SectionColors = Record<string, string[]>;
 function App() {
 
-  const [detectedColors, setDetectedColors] = useState<string[]>([]);
+  const [sectiondColors, setSectionedColors] = useState<SectionColors>({});
+  const [hashScanned, setHashScanned] = useState(false);
 
   const pingWebpageDom = async () => {
+    // fetch the active Browser window tab identity
     const [activeTab] = await chrome.tabs.query({ active: true, currentWindow: true });
 
     if (!activeTab || !activeTab.id) {
@@ -16,43 +18,99 @@ function App() {
     chrome.tabs.sendMessage(activeTab.id, { action: "PING_DOM" }, (response) => {
 
       if (response && response.status === "success") {
-        setDetectedColors(response.colors);
-      } else {
-        console.log("Communication failed. Ensure you are on a live website");
+        setSectionedColors(response.sections);
+         setHashScanned(true);
       }
     });
   }
 
   return (
-    <div className="w-[320px] p-5 bg-slate-900 text-slate-100 font-sans antialiased">
-      {/* Header Section */}
-      <div className="mb-4 border-b border-slate-800 pb-2">
-        <h1 className="text-xl font-bold text-teal-400">Tailwind Extracter</h1>
-        <p className="">Phase 1 : Local Message Passing</p>
+    <div className=" h-screen w-full p-5 bg-slate-900 text-slate-100 font-sans antialiased">
+     
+     {/* Header Section */}
+      <div className="border-b border-slate-800 pb-2">
+        <h1 className="text-xl font-bold text-teal-400">Tailwind Extractor</h1>
+        <p className="text-[11px] text-slate-400">Phase 2 : Chrome Side Panel Mode</p>
       </div>
 
+      {/* Control Action Button */}
+      <button 
+        onClick={pingWebpageDom} 
+        className="w-full bg-teal-500 hover:bg-teal-600 text-slate-950 font-bold text-xs py-3 px-4 rounded shadow transition-all duration-200 cursor-pointer uppercase tracking-wider"
+      >
+        Scan Section Tokens
+      </button>
+     
+      {/* The outer layout Dictionary loop */}
+      {hashScanned && Object.keys(setSectionedColors).length > 0 && (
+        <div className='space-y-4'>
+          {Object.entries(sectiondColors).map(([sectionName, colors], sectionIdx) =>{
+            return(
+            <div key = {sectionIdx} className='p-3 bg-slate-800 rounded border border-slate-700 space-y-2.5'> 
+
+            {/* Header Label for this specific webpage block section card */}
+            <div className='flex items-center justify-between border-b border-slate-700/60 pb-1'>
+              <span className='text-[10px] font-bold text-teal-400 uppercase tracking-wider'>{sectionName}</span>
+              <span className="text-[9px] bg-slate-950 px-1.5 py-0.2 rounded-full font-mono text-slate-400">{colors.length}</span>
+            </div>
+
+            {/* The Ineer Color swatch Grid Array Loop */}
+            <div className='grid grid-cols-3 gap-2'>
+              {colors.map((color, colorIdx)=> (
+                 <div key={colorIdx} className='flex flex-col items-center p-1.5 bg-slate-950 rounded border border-slate-900 space-y-1'>
+                  <div className='w-full h-6 rounded' style={{backgroundColor: color}}/>
+                   <code className="text-[9px] text-emerald-400 font-mono font-bold">{color}</code>
+                 </div>
+              ))}
+
+            </div>
+          
+            </div>
+          );
+          })} 
+        </div>
+      )}
+
+      {/* Fallback View state display message helper block */}
+      {!hashScanned && (
+        <div className="text-center text-xs text-slate-500 p-8 border border-dashed border-slate-800 rounded">
+          Click the scan button above to analyze tokens section by section!
+        </div>
+      )}
+
+    </div>
+  )
+}
+
+export default App ;
+{/* Header Section */}
+      {/* <div className="mb-4 border-b border-slate-800 pb-2">
+        <h1 className="text-xl font-bold text-teal-400">Tailwind Extracter</h1>
+        <p className="">Phase 1 : Local Message Passing</p>
+      </div> */}
+
       {/* Intractive Control Panel */}
-      <div className='space-y-4'>
+      {/* <div className='space-y-4'>
         <button onClick={pingWebpageDom} className=' bg-teal-500 hover:bg-teal-600 text-slate-950 font-bold text-xs py-2.5 px-4 rounded shadow transition-all duration-200 cursor-pointer'>
           Ping webpage DOM
-        </button>
+        </button> */}
 
         {/* Conitional Output Panel */}
 
-        {detectedColors.length > 0 && (
+        {/* {detectedColors.length > 0 && (
           <div className='p-3 bg-slate-800 rounded border border-slate-700 space-y-3'>
             <p className='text-[10px] font-semibold text-slate-400 uppercase tracking-wider'>
               Detected Design Tokens:
             </p>
             <div className='grid grid-cols-3 gap-2'>
               {detectedColors.map((color, index) => (
-                <div key={index} className="flex flex-col items-center p-1.5 bg-slate-950 rounded border border-slate-800 space-y-1">
+                <div key={index} className="flex flex-col items-center p-1.5 bg-slate-950 rounded border border-slate-800 space-y-1"> */}
                   {/* Live color Swatch Box */}
-                  <div className='w-full h-8 rounded border border-slate-600 shadow-inner'
+                  {/* <div className='w-full h-8 rounded border border-slate-600 shadow-inner'
                     style={{ backgroundColor: color }}
-                  />
+                  /> */}
                   {/* Raw String Output */}
-                  <code className='text-[10px] text-emerald-400 font-mono font-bold bg-slate-950 px-2 py-1 rounded border border-slate-800'>
+                  {/* <code className='text-[10px] text-emerald-400 font-mono font-bold bg-slate-950 px-2 py-1 rounded border border-slate-800'>
                     {color}
                   </code>
                 </div>
@@ -61,9 +119,4 @@ function App() {
           </div>
         )}
 
-      </div>
-    </div>
-  )
-}
-
-export default App
+      </div> */}
