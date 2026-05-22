@@ -59,11 +59,28 @@ function downloadConfig(tokens: DesignTokens){
    URL.revokeObjectURL(url);
 }
 
+//  CopytoclipBoard feeature 
+
+  async function copyToClipboard(text:string){
+     try{
+      await navigator.clipboard.writeText(text);
+     } catch (e){
+      const el = document.createElement('textarea');
+       el.value = text;
+       document.body.appendChild(el);
+       el.select();
+       document.execCommand('copy');
+       document.body.removeChild(el);
+     }
+  }
+
 
 function App() {
 
-  const [sectiondColors, setSectionedColors] = useState<SectionColors>({});
   const [hashScanned, setHashScanned] = useState(false);
+
+
+
 
   const pingWebpageDom = async () => {
     // fetch the active Browser window tab identity
