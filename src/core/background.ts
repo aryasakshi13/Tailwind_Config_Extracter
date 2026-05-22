@@ -14,11 +14,11 @@
 // });
 
 // Listen for clicks on the extension toolbar icon
-chrome.action.onClicked.addListener((tab) => {
-  if (!tab.id) return;
+// chrome.action.onClicked.addListener((tab) => {
+//   if (!tab.id) return;
   
-  // Send the message token straight to your scraper listener
-  chrome.tabs.sendMessage(tab.id, { action: "TOGGLE_SIDEBAR" }).catch((err) => {
-    console.log("Waiting for content script injection connection...", err);
-  });
-});
+//   // Send the message token straight to your scraper listener
+//   chrome.tabs.sendMessage(tab.id, { action: "TOGGLE_SIDEBAR" }).catch((err) => {
+//     console.log("Waiting for content script injection connection...", err);
+//   });
+// });

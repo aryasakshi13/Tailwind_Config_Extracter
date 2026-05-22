@@ -164,7 +164,7 @@ function rgbToHex(rgbStr: string): string | null {
     const g = Math.min(255, Math.max(0, parseInt(match[1])));
     const b = Math.min(255, Math.max(0, parseInt(match[2])));
 
-    // if(match.length === 4 && parseFloat(match[3])=== 0) return null ;
+
        if(match.length === 4){
          const alpha = parseFloat(match[3]);
          if(alpha === 0) return null ; 
@@ -176,20 +176,34 @@ function rgbToHex(rgbStr: string): string | null {
 
 function getElementSection(element: HTMLElement): string {
      let current: HTMLElement | null = element ;
-     while(current){
+     while(current && current !== document.body){
+
         const tag = current.tagName.toLowerCase();
+        const role = current.getAttribute('role')?.toLowerCase()|| '';
         const id = current.id.toLowerCase();
         const classes = typeof current.className === 'string'? current.className.toLowerCase(): '';
+        const combined = id + ' ' + classes;
 
-        if(tag === 'nav' || tag === 'header' || id.includes('nav') || id.includes('header') || classes.includes('nav') || classes.includes('header')){
-             return "Navigation Bar Zone";
-        }
-        if(id.includes('hero') || classes.includes('hero' ) || id.includes('banner') || id.includes('top')){
-            return "Hero Section / Banner" ;
-        }
-        if(tag === 'footer' || id.includes('footer') || classes.includes('footer')){
-             return "Footer Copyright Block" ;
-        }
+        // if(tag === 'nav' || tag === 'header' || id.includes('nav') || id.includes('header') || classes.includes('nav') || classes.includes('header')){
+        //      return "Navigation Bar Zone";
+        // }
+        // if(id.includes('hero') || classes.includes('hero' ) || id.includes('banner') || id.includes('top')){
+        //     return "Hero Section / Banner" ;
+        // }
+        // if(tag === 'footer' || id.includes('footer') || classes.includes('footer')){
+        //      return "Footer Copyright Block" ;
+        // }
+
+        //  Semantic HTML tag Check 
+         if(tag === 'nav' || role === 'navigation') return 'Navigation';
+         if(tag === 'header') return 'Header / Hero';
+         if(tag === 'footer' || role === 'contentinfo') return 'Footer';
+         if(tag === 'aside' || role === 'complementary') return 'Sidebar';
+         if(tag === 'main' || role === 'main') return 'Main Content';
+
+
+         
+
         current = current.parentElement;
      }
      return "Main Layout Content Layers" ;

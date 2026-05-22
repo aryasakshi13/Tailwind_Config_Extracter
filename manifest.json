@@ -6,13 +6,17 @@
 
   "permissions": [
     "activeTab",
-    "scripting"
+    "scripting",
+    "storage"
   ],
     "background": {
         "service_worker": "src/core/background.ts",
         "type": "module"
     },
-    "action": {},
+    "action": {
+       "default_popup": "index.html",
+       "default_title": "Tailwind Extractor"
+    },
     "content_scripts": [
         {
         "matches": ["<all_urls>"],
