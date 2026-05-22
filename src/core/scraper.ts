@@ -213,15 +213,26 @@ function getElementSection(element: HTMLElement): string {
 }
 
 // Global reference pointer tracking our dynamic right sidebar container element
-let sidePanelElement: HTMLDivElement | null = null;
+// let sidePanelElement: HTMLDivElement | null = null;
 
 function runPageColorScan(): Record<string, string[]> {
-    const sectionedData: Record<string, Set<string>> = {
-        "Navigation Bar Zone": new Set<string>(),
-        "Hero Section / Banner": new Set<string>(),
-        "Main Layout Content Layers": new Set<string>(),
-        "Footer Copyright Block": new Set<string>()
-    };
+    // const sectionedData: Record<string, Set<string>> = {
+    //     "Navigation Bar Zone": new Set<string>(),
+    //     "Hero Section / Banner": new Set<string>(),
+    //     "Main Layout Content Layers": new Set<string>(),
+    //     "Footer Copyright Block": new Set<string>()
+    // };
+
+    const sections = [
+          'Navigation', "Header / Hero", "Main Content",
+          "Components", "Sidebar", "Footer"
+    ];
+
+    const sectionedData: Record<string, Set<string>> = {};
+
+   sections.forEach(s => {sectionedData[s]= new Set<string>();});
+
+   const propsToScan = ["backgroundColor", 'color', 'borderColor', 'fill'];
 
     const allElements = document.querySelectorAll("*");
     allElements.forEach((element) => {
