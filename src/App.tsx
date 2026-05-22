@@ -46,7 +46,18 @@ function generateTailwindConfig(tokens:DesignTokens):string {
 
 }
 
+//  Download Config  - browser file download 
 
+function downloadConfig(tokens: DesignTokens){
+   const content = generateTailwindConfig(tokens);
+   const blob = new  Blob([content], {type: 'text/javascript'});
+   const url = URL.createObjectURL(blob);
+   const a = document.createElement('a');
+   a.href = url;
+   a.download = 'tailwind.config.js';
+   a.click();
+   URL.revokeObjectURL(url);
+}
 
 
 function App() {
