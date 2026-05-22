@@ -201,12 +201,15 @@ function getElementSection(element: HTMLElement): string {
          if(tag === 'aside' || role === 'complementary') return 'Sidebar';
          if(tag === 'main' || role === 'main') return 'Main Content';
 
-
-         
+        //   fallback : class/ id keyword
+        if(/nav|navbar|menu|topbar/ .test(combined)) return "Navigation";
+        if(/hero|banner|jumbotron|masthead/.test(combined)) return 'Header / Hero';
+        if(/footbar/.test(combined)) return 'Sidebar';
+        if(/card|feature|pricing|testimonal|cta/.test(combined)) return 'Components' ;
 
         current = current.parentElement;
      }
-     return "Main Layout Content Layers" ;
+     return "Main Content" ;
 }
 
 // Global reference pointer tracking our dynamic right sidebar container element
