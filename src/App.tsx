@@ -82,6 +82,9 @@ ${allColorLines}
       },
       fontFamily :{
         ${fontFamilyLines}
+      },  
+      fontSize:{
+       ${fontSizeLines}
       },
       spacing:{
        ${spacingLines}
@@ -262,6 +265,7 @@ function App() {
             </div>
           ))}
 
+          {/* css variables card */}
           {Object.keys(tokens.cssVars).length > 0 && (
             <div className="p-3 bg-slate-800 rounded border border-slate-700 space-y-2">
               <span className="text-[10px] font-bold text-violet-400 uppercase tracking-wider block">
@@ -283,6 +287,57 @@ function App() {
               </div>
             </div>
           )}
+
+          {/* font card  */}
+
+          {tokens.fonts.families.length > 0 && (
+            <div className = "p-3 bg-slate-800 rounded border border-slate-700 space-y-2">
+               <span className='text-[10px] font-bold text-amber-400 uppercase tracking-wide block'>
+                  fonts Detected
+               </span>
+
+               {/* font family name tags */}
+               <div className = "flex flex-wrap gap-1.5">
+                  {tokens.fonts.families.map(f =>(
+                    <span
+                      key={f}
+                      className ="text-[10px] bg-slate-950 text-amber-300 px-2 py-1 rounded font mono border border-slate-700"
+                      >
+                        {f}
+                      </span>
+                  ))}
+               </div>
+
+               {/* font size scale pills */}
+               <div className="flex flex-wrap gap-1 mt-1">
+                  {tokens.fonts.sizes.map(s =>(
+                    <span className ="text[-9px] bg-slate-950 text-slate-400 px-1.5 py-0.5 rounded font-mono border border-slate-700/50">
+                       {s} 
+                    </span>
+                  ))}
+               </div>
+            </div>
+          )}
+
+          {/* spacing card  */}
+           {tokens.spacing.length > 0 && (
+            <div className = "p-3 bg-slate-800 rounded border border-slate-700 space-y-2">
+               <span className = "text-[10px] font-bold text-sky-400 uppercase tracking-wider block">
+                 Spacing Scale
+               </span>
+               <div className="flex flex-wrap gap-1">
+                   {tokens.spacing.map(s => (
+                      <span
+                           key={s}
+                              className="text-[9px] bg-slate-950 text-sky-400 px-1.5 py-0.5 rounded font-mono border border-slate-700/50"
+                         >
+                           {s}
+                         </span>
+                          ))}
+                 </div>  
+            </div>
+           )}
+
         </div>
       )}
 
