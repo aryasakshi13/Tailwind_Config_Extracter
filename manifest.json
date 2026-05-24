@@ -7,20 +7,24 @@
   "permissions": [
     "activeTab",
     "scripting",
-    "storage"
+    "storage",
+    "sidePanel"
   ],
     "background": {
         "service_worker": "src/core/background.ts",
         "type": "module"
     },
+    "side_panel": {
+        "default_path": "index.html"
+    },
     "action": {
-       "default_popup": "index.html",
        "default_title": "Tailwind Extractor"
     },
     "content_scripts": [
         {
         "matches": ["<all_urls>"],
-        "js": ["src/core/scraper.ts"]
+        "js": ["src/core/scraper.ts"],
+        "run_at": "document_idle"
         }
     ]
 }

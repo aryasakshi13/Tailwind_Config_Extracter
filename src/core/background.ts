@@ -22,3 +22,14 @@
 //     console.log("Waiting for content script injection connection...", err);
 //   });
 // });
+
+
+chrome.action.onClicked.addListener((tab) => {
+    if (!tab.windowId) return;
+    chrome.sidePanel.open({ windowId: tab.windowId });
+});
+
+
+
+
+
