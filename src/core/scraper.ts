@@ -492,8 +492,14 @@ function runPageColorScan(): Record<string, string[]> {
       return vars ;
 
   }
+
+  interface fontSizeToken {
+      value: string;
+      section: string;
+      element: string;
+  }
   
-  function extractFontTokens(): {families: string[]; sizes: string[]} {
+  function extractFontTokens(): {families: string[]; sizes: fontSizeToken[]} {
     const familySet = new Set<string>();
     const sizeSet = new Set<number>();
 
@@ -503,34 +509,41 @@ function runPageColorScan(): Record<string, string[]> {
       try{
          const styles = window.getComputedStyle(htmlEl);
          if(styles.display === 'none' || styles.visibility === 'hidden') return; 
-      } catch(e) {return; }
 
-        try{
-            const styles = window.getComputedStyle(el);
-
-            const family = styles.fontFamily;
+            const familt = styles.fontFamily;
             if(family){
-                  const primary = family.split(',')[0].trim().replace(/['"]/g, '');
-                if (primary && primary !== 'inherit' && primary.length > 1) {
+                const primary = family.split(',')[0].trim().replce(/['"]/g, '');
+        
+                if(primary && primary !== 'inherit' && primary.length >1){
                     familySet.add(primary);
                 }
             }
 
-
             const size = styles.fontSize;
-            if (size && size !== '0px') {
+            if(size && size!== '0px'){
                 const px = parseFloat(size);
-                if (px > 0) sizeSet.add(px);
+                if(px > 0){
+                    const key = `${px}px` ;
+
+                    if(!sizeMap.has(key)){
+                        sizeMap.set(key, {
+                            value: key, 
+                            section: getElementSection(htmlEl),
+                            element: htmlEl.tagName.toLowerCase()
+                        });
+                    }
+                }
             }
+
         } catch(e) {}
+
+       
    });
 
    return {
       families: Array.from(familySet).slice(0, 5),
-        sizes: Array.from(sizeSet)
-            .sort((a, b) => a - b)
-            .filter((v, i, arr) => arr.indexOf(v) === i)
-            .map(v => `${v}px`)
+        sizes: Array.from(sizeMap.values())
+            .sort((a, b) => parseFloat(a.value)- parseFloat(b.value))
             .slice(0, 12)
    };
 
