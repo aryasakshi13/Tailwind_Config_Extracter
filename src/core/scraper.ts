@@ -498,10 +498,17 @@ function runPageColorScan(): Record<string, string[]> {
       section: string;
       element: string;
   }
+
+  interface SpacingToken {
+    value: string;
+    section: string;
+    property: string;
+}
+
   
   function extractFontTokens(): {families: string[]; sizes: fontSizeToken[]} {
     const familySet = new Set<string>();
-    const sizeSet = new Set<number>();
+    const sizeMap = new Map<string, fontSizeToken>();
 
    document.querySelectorAll('h1, h2, h3, h4, p, span, a, button, li, label').forEach((el) => {
       const htmlEl = el as HTMLElement;
@@ -510,9 +517,9 @@ function runPageColorScan(): Record<string, string[]> {
          const styles = window.getComputedStyle(htmlEl);
          if(styles.display === 'none' || styles.visibility === 'hidden') return; 
 
-            const familt = styles.fontFamily;
+            const family = styles.fontFamily;
             if(family){
-                const primary = family.split(',')[0].trim().replce(/['"]/g, '');
+                const primary = family.split(',')[0].trim().replace(/['"]/g, '');
         
                 if(primary && primary !== 'inherit' && primary.length >1){
                     familySet.add(primary);
@@ -550,28 +557,49 @@ function runPageColorScan(): Record<string, string[]> {
 
   }
 
-  function extractSpacingTokens(): string[]{
-       const spacingSet = new Set<number>();
+
+  function extractSpacingTokens(): SpacingToken[]{
+       const spacingMap = new Map<string, SpacingToken >();
 
        document.querySelectorAll('section, article, header, footer, nav, main, aside, div[class], button').forEach((el) =>{
            if(shouldSkipElement(el as HTMLElement)) return ;
 
+           const htmlEl = el as HTMLElement;
+           const section = getElementSection(htmlEl);
+
+
            try{
                 const styles = window.getComputedStyle(el);
-            ['padding-top', 'padding-left', 'gap'].forEach(prop => {
-                const val = styles.getPropertyValue(prop);
-                if (val && val !== '0px' && val !== 'normal') {
-                    const px = parseFloat(val);
-                    if (px >= 4 && px <= 128) spacingSet.add(px);
+                 
+                const propLabels: Record<string, string> = {
+                'padding-top':  'padding',
+                'padding-left': 'padding',
+                'gap':          'gap',
+            };
+
+                Object.entries(propLabels).forEach(([prop, label]) => {
+                    const val = styles.getPropertyValue(prop);
+                    if (val && val !== '0px' && val !== 'normal') {
+                        const px = parseFloat(val);
+                        if (px >= 4 && px <= 128) {
+                            const key = `${px}px`; 
+                            if (!spacingMap.has(key)) {
+                                spacingMap.set(key, {
+                                    value: key,
+                                    section,
+                                    property: label
+                                });  
+                        }
+                    }
                 }
-            });
-           } catch (e) {}
+                });
+            } catch (e) {}
        });
 
-       return Array.from(spacingSet)
-        .sort((a, b) => a - b)
-        .filter((v, i, arr) => arr.indexOf(v) === i)
-        .map(v => `${v}px`)
+       return Array.from(spacingMap.values())
+        .sort((a, b) => parseFloat(a.value) - parseFloat(b.value))
+        // .filter((v, i, arr) => arr.indexOf(v) === i)
+        // .map(v => `${v}px`)
         .slice(0, 15);
   }
 
