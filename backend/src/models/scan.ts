@@ -1,7 +1,7 @@
 import {Schema, model, Document} from 'mongoose';
 
  
-interface IScan extends Document {
+export interface IScan extends Document {
     userId: Schema.Types.ObjectId;
     siteUrl: string;
     siteName: string;
