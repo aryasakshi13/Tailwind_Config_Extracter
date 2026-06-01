@@ -1,6 +1,6 @@
 import {Request, Response} from 'express';
 import {User} from '../models/user';
-import { validateSignupUser } from '../utils/validation';
+import { validateLoginUser, validateSignupUser } from '../utils/validation';
 import bcrypt from 'bcryptjs';
 
 
@@ -48,3 +48,45 @@ export const registerUser = async(req: Request, res: Response): Promise<void> =>
         });
     }
 };
+
+export const loginUser = async(req: Request, res: Response): Promise<void> =>{
+    console.log("rounting working");
+    try{
+    
+        validateLoginUser(req.body);
+
+        const {email, password} = req.body;
+
+        const user = await User.findOne({email});
+
+        if(!user){
+            res.status(400).json({success: false, message:"Invalid email or password"});
+            return;
+        }
+
+        const isPasswordMatch = await bcrypt.compare(password, user.password);
+
+        if(!isPasswordMatch){
+            res.status(400).json({success: false, message: 'invalid email or password'});
+            return;
+        }
+        const token = user.getjwt();
+
+        res.cookie('token', token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'strict',
+            maxAge: 2 * 60 * 60 * 1000
+        });
+
+        res.status(200).json({message: `${user.firstName} login Suceessfully` })
+    }catch(err: any ){
+        console.log("Login Exception:", err.message);
+
+        res.status(400).json({
+            success: false,
+            message: err.message
+        });
+
+    }
+}

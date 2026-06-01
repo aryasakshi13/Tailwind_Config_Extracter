@@ -6,6 +6,11 @@ interface ValidationInput {
     email: string;
     password: string;
 }
+interface LoginInput {
+    email : string;
+    password: string;
+
+}
 
 export const validateSignupUser = (data:ValidationInput): void =>{
     const {firstName, lastName, email, password} = data;
@@ -22,4 +27,16 @@ export const validateSignupUser = (data:ValidationInput): void =>{
         throw new Error('Password is not Strong');
     }
 
+}
+
+export const validateLoginUser = (data:LoginInput): void =>{
+    const {email, password} = data ;
+
+    if(!email || !password){
+        throw new Error("Please enter both your email and pasword")
+    }
+    if(!validator.isEmail(email)){
+        throw new Error("please provide a valid email id ")
+    }
+    
 }

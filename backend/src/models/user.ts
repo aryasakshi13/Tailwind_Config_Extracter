@@ -38,7 +38,7 @@ const UserSchema = new Schema<IUser, UserModel, IUserMethods>({
      password: {
         type: String,
         required:[true, "Password is required"],
-        minLength: 10,
+        minLength: 8,
      },
    
 },{timestamps:true});

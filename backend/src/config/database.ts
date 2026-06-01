@@ -12,7 +12,7 @@ export const connectDB = async () => {
 
         console.log("MongoDB Connected successfully");
         
-    } catch (err) {
+    } catch (err:any) {
        
         console.error("Database connection failed ", err);
 
