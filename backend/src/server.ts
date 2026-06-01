@@ -3,6 +3,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import { connectDB} from './config/database';
 import authRoutes from './routes/auth';
+import cookieParser = require('cookie-parser');
 
 
 dotenv.config();
@@ -15,6 +16,8 @@ connectDB();
 
 app.use(cors());
 app.use(express.json());
+app.use(cookieParser());
+
 app.use("/auth",authRoutes)
 // app.post("/auth/login", (re,res)=>{
 
