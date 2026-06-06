@@ -1,4 +1,5 @@
 import{Request, Response} from 'express';
+import { Theme } from '../models/scan';
 
 export const extractTailwindConfig = async(req:Request, res: Response): Promise<void> =>{
     try{
@@ -76,3 +77,48 @@ export const extractTailwindConfig = async(req:Request, res: Response): Promise<
         });
     }
 };
+
+export const saveTailwindConfig = async (req: Request, res:Response):Promise<void> =>{
+    try{
+        const {siteUrl, siteName, sections} = req.body;
+
+        if(!siteUrl || !sections){
+            res.status(400).json({
+                success: false,
+                message: "Missing saving paraeters. siteUrl and sections object data are required"
+            });
+            return;
+        }
+
+        const authUser = (req as any).user;
+        if(!authUser || !authUser._id){
+            res.status(401).json({
+                success:false,
+                message: "Unauthorized access. Please log in to save configuration to your account"
+            });
+            return;
+        }
+
+        const newThemeRecord = new Theme({
+            userId: authUser._id,
+            siteUrl,
+            siteName:siteName || "Unnamed Extracted Site",
+            sections
+        });
+
+        await newThemeRecord.save();
+
+        res.status(201).json({
+            success:true,
+            message: "design configuration saved to your cloud history dashboard successfully!",
+            data: newThemeRecord
+        });
+
+    } catch(err: any) {
+        console.error("Save controller error:", err.message);
+        res.status(500).json({
+            success:false,
+            message:"Internal Server Error while saving configuration profile to the cloud."
+        });
+    }
+}

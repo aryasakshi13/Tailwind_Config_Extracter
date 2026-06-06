@@ -14,7 +14,6 @@ export interface IScan extends Document {
         }; 
     };
 }
-
 const ThemeSchema = new Schema<IScan>(
     {
         userId: {
