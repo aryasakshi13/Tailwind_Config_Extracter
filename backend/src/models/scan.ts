@@ -9,7 +9,7 @@ export interface IScan extends Document {
         [sectionName: string]: {
             colors: string[];
             fonts: string[];
-            space: string[];
+            spaces: string[];
 
         }; 
     };
@@ -37,7 +37,7 @@ const ThemeSchema = new Schema<IScan>(
                 colors: [String],
                 fonts: [String],
                 spaces: [String]
-            },{id:false})
+            },{_id:false})
 
         }
     },{

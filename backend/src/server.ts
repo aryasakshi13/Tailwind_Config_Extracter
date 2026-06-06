@@ -3,6 +3,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import { connectDB} from './config/database';
 import authRoutes from './routes/auth';
+import extractorRoutes from './routes/extractor';
 import cookieParser from 'cookie-parser';
 
 
@@ -26,6 +27,7 @@ app.use(cookieParser());
 // });
 
 app.use('/auth', authRoutes);
+app.use('/extractor', extractorRoutes);
 
 // app.post("/auth/login", (re,res)=>{
 

@@ -1,4 +1,4 @@
-import{Request, response} from 'express';
+import{Request, Response} from 'express';
 
 export const extractTailwindConfig = async(req:Request, res: Response): Promise<void> =>{
     try{
@@ -47,7 +47,7 @@ export const extractTailwindConfig = async(req:Request, res: Response): Promise<
                  ${colors.map((color: string, idx: number) => `'color-token-${idx + 1}': '${color}'`).join(',\n        ')}
               },
               fontFamily: {
-                 ${colors.map((color: string, idx: number) => `'color-token-${idx + 1}': '${color}'`).join(',\n        ')}
+                 ${fonts.map((font: string, idx: number) => `'site-${idx + 1}': ['${font}', 'sans-serif']`).join(',\n        ')}
               },
               fontSize: {
                  ${Object.entries(uniqueFontSizes).map(([key, val]) => `'${key}': ['${val}', { lineHeight: '1.5' }]`).join(',\n        ')}
