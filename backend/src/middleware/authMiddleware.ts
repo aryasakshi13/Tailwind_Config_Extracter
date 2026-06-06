@@ -4,13 +4,13 @@ import { User } from '../models/user';
 import { JwtPayload } from 'jsonwebtoken';
 
 export interface AuthenticationRequest extends Request {
-    user: any ;
+    user?: any ;
 }
     
 
 export const userAuthGuard = async (req: AuthenticationRequest, res: Response, next: NextFunction):Promise<void> =>{
    try{
-      const token = req.cookies.token;
+      const token = req.cookies?.token;
 
       if(!token){
         res.status(401).json({success: false, message: 'Authentication required. Please login'})
@@ -27,7 +27,7 @@ export const userAuthGuard = async (req: AuthenticationRequest, res: Response, n
 
       const decode = jwt.verify(token, secret) as JwtPayload;
 
-      const user = await User.findById(decode._id).select('-password');
+      const user = await User.findById(decode.id).select('-password');
       if(!user){
         res.status(401).json({ success: false, message: 'User profile not found.' });
          return;

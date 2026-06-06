@@ -3,7 +3,9 @@ import {User} from '../models/user';
 import { validateLoginUser, validateSignupUser } from '../utils/validation';
 import bcrypt from 'bcryptjs';
 
-
+interface AuthenticationRequest extends Request {
+    user?: any;
+}
 
 export const registerUser = async(req: Request, res: Response): Promise<void> =>{
     try{
@@ -88,5 +90,21 @@ export const loginUser = async(req: Request, res: Response): Promise<void> =>{
             message: err.message
         });
 
+    }
+}
+
+export const getUserProfile = async(req: AuthenticationRequest, res: Response): Promise<void> => {
+    try{
+     res.status(200).json({
+       success: true,
+       message: "Profile dashboard ata fetched successfully",
+       user: req.user
+     }); 
+    }catch(err: any){
+         console.log("Profile Error:", err.message);
+         res.status(500).json({
+            success: false,
+            message: "Internal Server Error while recieving profile data"
+         })
     }
 }
