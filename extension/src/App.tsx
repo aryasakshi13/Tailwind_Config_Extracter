@@ -301,6 +301,63 @@ function App() {
 
     };
 
+    const handleSavetoCloud = async() =>{
+       
+      if(!tokens) return ;
+      setIsSaving(true);
+
+      try{
+        const  formattedSections : Record<string, any>  = {};
+         Object.keys(tokens.sections).forEach((sectionName)=>{
+          const cleanName = sectionName.toLowerCase().replace(/[^a-z0-9]+/g, '-') .replace(/^-|-$/g, '');
+          const SectionColors =tokens.sections[sectionName] || [];
+
+          const sectionFonts = tokens.fonts.sizes
+          .filter(s => s.section === sectionName)
+          .map(s => s.value);
+
+          const sectionSpace = tokens.spacing
+          .filter( s => s.section === sectionName)
+          .map(s => s.value);
+
+          formattedSections[cleanName] ={
+            colors: SectionColors,
+            fonts: sectionFonts,
+            spaces: sectionSpace
+          }
+
+         });
+
+
+
+         const response = await fetch(`${BACKEND_URL}/save`,{
+          
+             method:'POST',
+             headers:{'Content-Type': 'application/json'},
+             body: JSON.stringify({
+               siteUrl: window.location.href,
+               siteName: tokens.sourceUrl + "Theme Workspace",
+               sections: formattedSections
+             }),
+            
+         });
+
+          const result  = await response.json();
+
+          if(result.success){
+            alert("Awesome! Design system successfully synced to your clou dashboar workspace.");
+          } else{
+            alert(`Cloud save failed: ${result.message}`);
+          }
+        
+      }catch(err:any){
+        console.error("Cloud vault connection issue:", err.message);
+        alert("Failed to establish a network link to the clouud gateway");
+      } finally {
+         setIsSaving(false);
+      }
+    }
+
   const handleColorCopy = async (color: string) => {
     await copyToClipboard(color);
     setCopiedColor(color);
