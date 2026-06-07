@@ -385,12 +385,21 @@ function App() {
 
         {/* ADDED: Download button — only appears after scanning */}
         {hashScanned && tokens && (
+          <div className='grid grid-cols-2 gap-2'>
           <button
             onClick={handleDownloadConfig}
             className="w-full bg-violet-600 hover:bg-violet-700 text-white font-bold text-xs py-3 px-4 rounded shadow transition-all duration-200 uppercase tracking-wider"
           >
             ↓ Download tailwind.config.js
           </button>
+           <button
+            onClick ={handleSavetoCloud}
+            disabled={isSaving}
+            className='w-full bg-emerald-600 hover: bg-emerald-700 disabled:bg-emerald-900 text-white font-bold text-[10px] py-2.5 px-2 rounded shadow transition-all duration-200 uppercase tracking-wider'
+           >
+            {isSaving ? 'Saving...': '☁ Save to Cloud'}
+           </button>
+          </div>
         )}
       </div>
 
