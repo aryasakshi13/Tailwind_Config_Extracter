@@ -31,7 +31,15 @@ const HistoryDashboard: React.FC = () =>{
 
     }, []);
 
-    
+     if(loading){
+         return(
+            <div className='min-h-screen bg-slate-950 text-slate-200 flex items-center justify-center font-sans'>
+                <p className='text-lg animate-pulse tracking-wide font-medium'>
+                    Loading configuration vaults..
+                </p>
+            </div>
+         );
+     }
         return(
             <div className=' = "main-h-screen bg-slate-950 text-slate-100 p-8 font-sans'>
               <div className='max-w-7xl mx-auto'>
@@ -47,8 +55,11 @@ const HistoryDashboard: React.FC = () =>{
                 </header>
                 {/* Section : Workspace Grid placeholder */}
                   <div className='bg-slate-900 border border-slate-800 rounded-xl p-12 text-center'>
-                     <p className='text-slate-400'>
-                       Workspace grid engine will mount right here next!
+                     <p className='text-emerald-400 font-mono text-lg mb-2'>
+                        Connected to API server Successfully!
+                     </p>
+                     <p className='text-slate-300'>
+                        Found<span className='text-white font-bold'>{themes.length}</span>Saved workspace in your mongodb cluster.
                      </p>
                   </div>
 
