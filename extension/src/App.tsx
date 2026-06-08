@@ -327,16 +327,13 @@ function App() {
           }
 
          });
-
-
-
          const response = await fetch(`${BACKEND_URL}/save`,{
           
              method:'POST',
              headers:{'Content-Type': 'application/json'},
              body: JSON.stringify({
-               siteUrl: window.location.href,
-               siteName: tokens.sourceUrl + "Theme Workspace",
+               siteUrl: tokens.sourceUrl || "Unknown Target Site",
+               siteName: (tokens.sourceUrl || "Unnamed Site") + " Theme Workspace",
                sections: formattedSections
              }),
             

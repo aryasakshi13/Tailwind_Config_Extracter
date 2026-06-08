@@ -2,7 +2,7 @@ import {Schema, model, Document} from 'mongoose';
 
  
 export interface IScan extends Document {
-    userId: Schema.Types.ObjectId;
+    userId: any;
     siteUrl: string;
     siteName: string;
     sections: {
@@ -14,6 +14,7 @@ export interface IScan extends Document {
         }; 
     };
 }
+
 const ThemeSchema = new Schema<IScan>(
     {
         userId: {

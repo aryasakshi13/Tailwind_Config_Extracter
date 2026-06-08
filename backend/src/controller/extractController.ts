@@ -1,5 +1,6 @@
 import{Request, Response} from 'express';
 import { Theme } from '../models/scan';
+import mongoose from 'mongoose';
 
 export const extractTailwindConfig = async(req:Request, res: Response): Promise<void> =>{
     try{
@@ -117,17 +118,19 @@ export const saveTailwindConfig = async (req: Request, res:Response):Promise<voi
             return;
         }
 
-        const authUser = (req as any).user;
-        if(!authUser || !authUser._id){
-            res.status(401).json({
-                success:false,
-                message: "Unauthorized access. Please log in to save configuration to your account"
-            });
-            return;
-        }
+        // const authUser = (req as any).user;
+        // if(!authUser || !authUser._id){
+        //     res.status(401).json({
+        //         success:false,
+        //         message: "Unauthorized access. Please log in to save configuration to your account"
+        //     });
+        //     return;
+        // }
+
+        const targetUserId = new mongoose.Types.ObjectId("60d5ec8587123456789abcde");
 
         const newThemeRecord = new Theme({
-            userId: authUser._id,
+            userId: targetUserId,
             siteUrl,
             siteName:siteName || "Unnamed Extracted Site",
             sections
@@ -149,3 +152,26 @@ export const saveTailwindConfig = async (req: Request, res:Response):Promise<voi
         });
     }
 }
+
+export const getUserThemes = async(req: Request, res: Response): Promise<void> =>{
+    try{
+        // const targetUserId = new mongoose.Types.ObjectId("60d5ec8587123456789abcde");
+
+        const targetUserId = "60d5ec8587123456789abcde";
+
+        const userSavedThemes = await Theme.find({userId: targetUserId}). sort({createdAt: -1});
+
+        res.status(200).json({
+            success: true,
+            count:userSavedThemes.length,
+            message: "Saved configuration history workspace fetched successfully!",
+            data: userSavedThemes
+        });
+    }catch(err: any){
+        console.error("fetch history controler error", err.message);
+        res.status(500).json({
+            success: false,
+            message:"Internal Server Error while retrieving configuration workspace history data profiles."
+        });
+    }
+};
