@@ -54,13 +54,48 @@ const HistoryDashboard: React.FC = () =>{
                     </p>
                 </header>
                 {/* Section : Workspace Grid placeholder */}
-                  <div className='bg-slate-900 border border-slate-800 rounded-xl p-12 text-center'>
-                     <p className='text-emerald-400 font-mono text-lg mb-2'>
-                        Connected to API server Successfully!
-                     </p>
-                     <p className='text-slate-300'>
-                        Found<span className='text-white font-bold'>{themes.length}</span>Saved workspace in your mongodb cluster.
-                     </p>
+                  <div className='grid grid-cols-1 md: grid-cols-2 lg:grid:-cols-3 gap-6'>
+                    {themes.map((theme) => (
+                      <div key ={theme._id}
+                        className='bg-slate-900 border border-slate-800 hover:border-slate-700 transition-all duration-200 rounded-xl p-5 shadow-xl flex flex-col justify-between'
+                      >
+                        <div>
+                            {/* Header title & timestamp */}
+                            <div className='flex items-start justify-between mb-2'>
+                                 <h3 className=' text-white font-bold text-base truncate pr-2' title={theme.siteName}>
+                                     {theme.siteName || "Unnamed Sync"}
+                                </h3>
+                                <span className='text-[10px] bg-slate-800 text-slate-400 font-medium px-2 py-0.5 rounded-full whitespace-nowrap'>
+                                    {new Date(theme.createdAt).toLocaleDateString()}
+
+                                 </span>
+                            </div>
+
+                                {/* Target External Url Link */}
+
+                                <a
+                                  href ={theme.siteUrl.startsWith('http') ? theme.siteUrl: `https://${theme.siteUrl}`} 
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  className='text-emerald-400 text-xs font-mono hover:underline inline-block mb-4 truncate max-w-full'
+                                >
+                                  {theme.siteUrl}
+                                </a>
+                                  <div className='text-xs text-slate-500 italic border-t border-slate-800/60 pt-3'>
+                                      Token asset swatches mounting  here next....
+                                  </div>
+                        </div>
+                            <div className="mt-6 pt-3 border-t border-slate-800"> 
+                                <button
+                                  onClick={()=> alert(`Opeming workspace architecture for: {theme.siteName}`)}
+                                  className='w-full bg-slate-800 hover;bg-slate-600 text-slate-200 font-bold text-xs py02 rounded-lg transition-colors duration-150'
+                                >
+                                 View Dessign Token Configuration
+                                </button>
+                            </div>
+                      </div>
+                    ))}
+                     
                   </div>
 
               </div>
