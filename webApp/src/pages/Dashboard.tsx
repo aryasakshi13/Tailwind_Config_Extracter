@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-
 import Editor from '@monaco-editor/react';
 
 interface ThemeRecord {
@@ -53,13 +52,116 @@ const HistoryDashboard: React.FC = () => {
             </div>
         );
     }
-     // Monaco workspace sandbox
-    // if(selectedTheme){
-    //    const formattedCodeValue = JSON.stringify({
-    //       themeName: selectedTheme.siteName,
-    //       sourceDomain: selectedTheme.siteUrl,
-    //       designTokens: selectedTheme.sections
-    //    }, null, 2);
+
+
+    //  Monaco workspace sandbox
+    if(selectedTheme){
+       const formattedCodeValue = JSON.stringify({
+          themeName: selectedTheme.siteName,
+          sourceDomain: selectedTheme.siteUrl,
+          designTokens: selectedTheme.sections
+       }, null, 2);
+
+       return(
+          <div className='min-h-screen bg-slate-950 text-slate-100 flex flex-col font sans'>
+
+            {/* View Header nav */}
+            <header className="h-16 border-b border-slate-900 bg-slate-900/40 px-6 flex items-center justify-between backdrop-blur-sm">
+               <div className='flex items-center gap-4'>
+                    <button
+                    onClick={() => setSelectedTheme(null)}
+                    className="px-3 py-1.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 hover:border-slate-700 rounded-lg text-xs font-semibold text-slate-300 hover:text-white transition-all duration-150"
+                    >
+                    ← Back to History Vault
+                    </button>
+                    <div className="h-4 w-[1px] bg-slate-800" />
+                            <h2 className="text-sm font-bold text-white">
+                                Editing Architecture: <span className="text-emerald-400 font-mono font-medium">{selectedTheme.siteName}</span>
+                            </h2>
+                </div>
+                   <button 
+                        onClick={() => {
+                            navigator.clipboard.writeText(JSON.stringify(selectedTheme.sections, null, 2));
+                            alert("Design tokens copied directly to clipboard tracking buffers!");
+                        }}
+                        className="bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold text-xs px-4 py-2 rounded-lg transition-colors duration-150"
+                    >
+                        Copy Design Tokens
+                    </button>
+            </header>
+             
+             <div className="flex-1 grid grid-cols-1 lg:grid-cols-2">
+                 {/* Code Sandbox View Panel Wrapper */}
+                    <div className="border-r border-slate-900 pt-4 bg-[#1e1e1e]">
+                        <div className="px-4 pb-2 border-b border-slate-900 flex items-center justify-between text-slate-500 text-[10px] uppercase tracking-wider font-bold">
+                            <span>tailwind.config.json</span>
+                            <span className="text-emerald-500/80 lowercase font-mono font-medium">interactive code sandbox</span>
+                        </div>
+                        <Editor
+                            height="calc(100vh - 120px)"
+                            defaultLanguage="json"
+                            theme="vs-dark"
+                            value={formattedCodeValue}
+                            options={{
+                                fontSize: 13,
+                                minimap: { enabled: false },
+                                wordWrap: 'on',
+                                folding: true,
+                                lineNumbers: 'on',
+                                scrollbar: { verticalScrollbarSize: 8 },
+                                readOnly: false // Allows dynamic modifications right inside the editor
+                            }}
+                        />
+                    </div>
+
+                    {/* Architectural values meta breakdown panel view  */}
+
+                    <div className="p-6 bg-slate-950 flex flex-col justify-between overflow-y-auto" style={{ height: "calc(100vh - 64px)" }}>
+                        <div>
+                            <div className='mb-6'>
+                               <span className='text-[10px] text-emerald-400 font-bold font-mono tracking-widest uppercase block mb-1'> Architecture Preview Layer</span>
+                               <h3 className="text-xl font-black text-white">{selectedTheme.siteName} Details</h3>
+                               <p className="text-slate-400 text-xs font-mono mt-1">{selectedTheme.siteUrl}</p>
+                            </div>
+
+                            <div className='space-y-6'>
+                               {Object.keys(selectedTheme.sections).map((sectionKey) => {
+                                   const dataObj = selectedTheme.sections[sectionKey];
+                                   return (
+                                       <div key={sectionKey} className="bg-slate-900/40 border border-slate-900 p-4 rounded-xl">
+                                           <h4 className="text-xs font-extrabold tracking-wider text-slate-300 uppercase mb-3 border-b border-slate-800/60 pb-1.5">
+                                               ⚙ {sectionKey.replace('-', ' ')} Profile Tokens
+                                           </h4>
+                                           <div className="space-y-3 text-xs">
+                                               <div>
+                                                   <span className="text-slate-500 block text-[10px] font-bold mb-1">Extracted Hex Colors:</span>
+                                                   <div className="flex flex-wrap gap-1.5">
+                                                       {dataObj.colors?.map((c, i) => (
+                                                           <span key={i} className="bg-slate-950 text-slate-300 font-mono text-[10px] border border-slate-800/80 px-2 py-0.5 rounded-md flex items-center gap-1.5">
+                                                               <span className="w-2 h-2 rounded-full inline-block" style={{ backgroundColor: c }} /> {c}
+                                                           </span>
+                                                       )) || <span className="text-slate-600 italic">None detected</span>}
+                                                   </div>
+                                               </div>
+                                           </div>
+                                       </div>
+                                   );
+                               })}   
+
+                            </div>
+
+                        </div>
+                         <footer className="border-t border-slate-900 pt-4 text-[11px] text-slate-600 text-center font-medium">
+                            System Design Workspace Architecture Layer • Synchronized Extension Environment
+                        </footer>
+                    </div>
+                  
+             </div>
+
+
+          </div>
+       );
+    }
 
     return (
         <div className=' = "min-h-screen bg-slate-950 text-slate-100 p-8 font-sans'>
