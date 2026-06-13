@@ -33,6 +33,7 @@ export const registerUser = async(req: Request, res: Response): Promise<void> =>
         res.status(201).json({
             success: true,
             message:'User registered Successfully',
+            token:token,
             data:{
                 id: user._id,
                 firstName: user.firstName,

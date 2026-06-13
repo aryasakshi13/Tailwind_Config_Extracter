@@ -4,6 +4,7 @@ import './index.css'
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import HistoryDashboard from './pages/Dashboard';
 import Signup from './pages/Signup';
+import Login from './pages/login';
 
 
 function App() {
@@ -11,6 +12,7 @@ function App() {
       <Router>
         <Routes>
           <Route path="/signup" element={<Signup />} />
+          <Route path="/login" element={<Login />} />
           <Route path ="/dashboard" element={<HistoryDashboard/>}/>
         </Routes>
       </Router>

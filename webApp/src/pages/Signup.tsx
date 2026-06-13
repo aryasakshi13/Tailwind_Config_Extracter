@@ -6,10 +6,38 @@ const Signup: React.FC = () =>{
     const[email, setemail] = useState('');
     const[password, setPassword] = useState('');
     const[error, setError] = useState('');
-    const[loading, setLoading] = useState('');
+    const[loading, setLoading] = useState(false);
 
+    const navigate = useNavigate();
+
+
+    const handleSignupSubmit =async (e: React.FormEvent) =>{
+         e.preventDefault();
+         setError('');
+         setLoading(true);
     
-    
+            try{
+                const response = await fetch('http://localhost:5000/api/auth/signup', {
+                    method : 'POST',
+                    headers : {'Content-Type': 'application/json'},
+                    body: JSON.stringify({name, email, password}),
+                });
+
+                const data = await response.json();
+
+                if(data.success || response.ok){
+                    localStorage.setItem('token', data.token || data.userId);
+                  navigate('/dashboard');
+                }
+                else{
+                    setError(data.message || 'Registraion failed. Please check your parameters');
+                }
+            }catch (err){
+                setError('Cannot establish a link with the authetrication server.');
+            } finally{
+                setLoading(false);
+            }
+    }
 
     return (
         <div className='min-h-screen bg-slate-950 flex items-center justify-center p-6 font-sans'>
@@ -24,7 +52,7 @@ const Signup: React.FC = () =>{
                     {error}
                 </div>
             )}
-            <form  className='space-y-4'>
+            <form  onSubmit = {handleSignupSubmit} className='space-y-4'>
                 <div>
                     <label className=' block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1.5'>Name</label>
                     <input
@@ -40,7 +68,7 @@ const Signup: React.FC = () =>{
                 <div>
                     <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">Email Address</label>
                     <input 
-                    type="email" required placeholder="sakshi@domain.com" value={email} onChange={(e) => setEmail(e.target.value)}
+                    type="email" required placeholder="john@domain.com" value={email} onChange={(e) => setemail(e.target.value)}
                     className="w-full bg-slate-950 border border-slate-800 focus:border-emerald-500/50 rounded-xl px-4 py-2.5 text-sm text-slate-100 placeholder-slate-600 outline-none transition-all duration-200"
                     />
                 </div>
@@ -54,7 +82,7 @@ const Signup: React.FC = () =>{
                 <button
                  type="submit"
                  disabled={loading}
-                 className='-full bg-emerald-500 hover:bg-emerald-600 disabled:bg-slate-800 disabled:text-slate-500 text-slate-950 font-bold text-sm py-2.5 rounded-xl transition-all duration-150 shadow-md shadow-emerald-500/5 mt-2'
+                 className='w-full bg-emerald-500 hover:bg-emerald-600 disabled:bg-slate-800 disabled:text-slate-500 text-slate-950 font-bold text-sm py-2.5 rounded-xl transition-all duration-150 shadow-md shadow-emerald-500/5 mt-2'
                  >
                   {loading ? 'Initializing vault Environment...' : 'create Account & open Dashboard'}
                 </button>
@@ -65,3 +93,6 @@ const Signup: React.FC = () =>{
     );
 };
  export default Signup;
+
+
+

@@ -1,6 +1,7 @@
 import{Request, Response} from 'express';
 import { Theme } from '../models/scan';
 import mongoose from 'mongoose';
+import { AuthenticationRequest } from '../middleware/authMiddleware';
 
 export const extractTailwindConfig = async(req:Request, res: Response): Promise<void> =>{
     try{
@@ -157,7 +158,20 @@ export const getUserThemes = async(req: Request, res: Response): Promise<void> =
     try{
         // const targetUserId = new mongoose.Types.ObjectId("60d5ec8587123456789abcde");
 
-        const targetUserId = "60d5ec8587123456789abcde";
+        // const targetUserId = "60d5ec8587123456789abcde";
+
+        const authReq = req as AuthenticationRequest;
+        
+         
+         if (!authReq.user) {
+            res.status(401).json({
+                success: false,
+                message: "Unauthorized access: Active user context session profile missing."
+            });
+            return;
+        }
+
+        const targetUserId = authReq.user?._id;
 
         const userSavedThemes = await Theme.find({userId: targetUserId}). sort({createdAt: -1});
 

@@ -5,6 +5,7 @@ import { connectDB} from './config/database';
 import authRoutes from './routes/auth';
 import extractorRoutes from './routes/extractor';
 import cookieParser from 'cookie-parser';
+import { userAuthGuard } from './middleware/authMiddleware';
 
 
 dotenv.config();
@@ -27,25 +28,26 @@ app.use(cookieParser());
 // });
 
 app.use('/auth', authRoutes);
-app.use('/extractor', extractorRoutes);
+app.use('/extractor',userAuthGuard);
+// app.use('/extractor', extractorRoutes);
 
 // app.post("/auth/login", (re,res)=>{
 
 // })
  
-app.use((req, res) => {
-    console.log(`404: ${req.method} ${req.url}`);
-    res.status(404).json({ message: `Cannot ${req.method} ${req.url}` });
-});
+// app.use((req, res) => {
+//     console.log(`404: ${req.method} ${req.url}`);
+//     res.status(404).json({ message: `Cannot ${req.method} ${req.url}` });
+// });
 
-console.log("\n--- Registered Routes ---");
-authRoutes.stack.forEach((layer: any) => {
-    if (layer.route) {
-        const methods = Object.keys(layer.route.methods).join(', ').toUpperCase();
-        console.log(`${methods} /auth${layer.route.path}`);
-    }
-});
-console.log("-------------------------\n");
+// console.log("\n--- Registered Routes ---");
+// authRoutes.stack.forEach((layer: any) => {
+//     if (layer.route) {
+//         const methods = Object.keys(layer.route.methods).join(', ').toUpperCase();
+//         console.log(`${methods} /auth${layer.route.path}`);
+//     }
+// });
+// console.log("-------------------------\n");
 
 const startServer = async () => {
     await connectDB();  // wait for DB first
