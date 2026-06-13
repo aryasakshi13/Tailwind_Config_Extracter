@@ -19,6 +19,12 @@ const PORT = process.env.PORT || 5000 ;
 app.use(cors({ origin: true, credentials: true }));
 app.use(express.json());
 app.use(cookieParser());
+app.use((req, res, next) => {
+    console.log(`\n🚨 CAMERA WATCHING: ${req.method} ${req.url}`);
+    console.log(`Headers Auth:`, req.headers.authorization || "❌ NONE");
+    console.log(`Cookies:`, req.cookies || "❌ NONE");
+    next();
+});
 // app.post('/login', loginUser);
 
 
@@ -28,7 +34,8 @@ app.use(cookieParser());
 // });
 
 app.use('/auth', authRoutes);
-app.use('/extractor',userAuthGuard);
+app.use('/extractor', userAuthGuard, extractorRoutes);
+
 // app.use('/extractor', extractorRoutes);
 
 // app.post("/auth/login", (re,res)=>{

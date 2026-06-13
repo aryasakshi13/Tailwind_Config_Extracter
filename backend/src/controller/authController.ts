@@ -21,7 +21,8 @@ export const registerUser = async(req: Request, res: Response): Promise<void> =>
             password:hashpassword
         });
         await user.save();
-        const token = user.getjwt();
+        const token = user.getjwt();  
+
 
         res.cookie('token', token,{
             maxAge: 2* 60 * 60 * 1000,

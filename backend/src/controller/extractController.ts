@@ -14,7 +14,6 @@ export const extractTailwindConfig = async(req:Request, res: Response): Promise<
             });
             return;
         }
-         
         let colorLines = '';
         if(sections && Object.keys(sections).length > 0){
             colorLines = Object.entries(sections)

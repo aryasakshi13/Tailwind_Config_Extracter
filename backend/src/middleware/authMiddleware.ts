@@ -20,6 +20,7 @@ export const userAuthGuard = async (req: AuthenticationRequest, res: Response, n
       
 
       if(!token){
+        console.log("guard block no token found in headers or cookies");
         res.status(401).json({success: false, message: 'Authentication required. Please login'})
         return;
 
