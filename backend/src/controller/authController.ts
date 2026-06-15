@@ -110,3 +110,22 @@ export const getUserProfile = async(req: AuthenticationRequest, res: Response): 
          })
     }
 }
+
+export const logoutUser = async(req: Request, res: Response): Promise<void> =>{
+     try{
+         res.clearCookie("token", {
+            httpOnly : true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'strict'
+         });
+
+         res.status(200).json({
+            success: true,
+            message: "Session Logged out cleanly. Active token cleared from cookies"
+         });
+
+     }catch(err: any){
+        console.error("Logout Error:", err.meesage);
+        res.status(500).json({succes: false, message:"Internal server error during logout."})
+     }
+}

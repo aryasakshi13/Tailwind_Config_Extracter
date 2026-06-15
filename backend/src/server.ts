@@ -34,9 +34,9 @@ app.use((req, res, next) => {
 // });
 
 app.use('/auth', authRoutes);
-app.use('/extractor', userAuthGuard, extractorRoutes);
+// app.use('/extractor', userAuthGuard, extractorRoutes)
 
-// app.use('/extractor', extractorRoutes);
+app.use('/extractor', extractorRoutes);
 
 // app.post("/auth/login", (re,res)=>{
 
@@ -47,13 +47,13 @@ app.use('/extractor', userAuthGuard, extractorRoutes);
 //     res.status(404).json({ message: `Cannot ${req.method} ${req.url}` });
 // });
 
-// console.log("\n--- Registered Routes ---");
-// authRoutes.stack.forEach((layer: any) => {
-//     if (layer.route) {
-//         const methods = Object.keys(layer.route.methods).join(', ').toUpperCase();
-//         console.log(`${methods} /auth${layer.route.path}`);
-//     }
-// });
+console.log("\n--- Registered Routes ---");
+authRoutes.stack.forEach((layer: any) => {
+    if (layer.route) {
+        const methods = Object.keys(layer.route.methods).join(', ').toUpperCase();
+        console.log(`${methods} /auth${layer.route.path}`);
+    }
+});
 // console.log("-------------------------\n");
 
 const startServer = async () => {

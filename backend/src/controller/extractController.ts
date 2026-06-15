@@ -127,7 +127,19 @@ export const saveTailwindConfig = async (req: Request, res:Response):Promise<voi
         //     return;
         // }
 
-        const targetUserId = new mongoose.Types.ObjectId("60d5ec8587123456789abcde");
+        // const targetUserId = new mongoose.Types.ObjectId("60d5ec8587123456789abcde");
+
+        const authReq = req as AuthenticationRequest;
+        if (!authReq.user || !authReq.user._id) {
+            res.status(401).json({
+                success: false,
+                message: "Unauthorized access. Please log in to save configurations to your account."
+            });
+            return;
+
+        }
+
+        const targetUserId = authReq.user?._id;
 
         const newThemeRecord = new Theme({
             userId: targetUserId,
