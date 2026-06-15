@@ -200,3 +200,42 @@ export const getUserThemes = async(req: Request, res: Response): Promise<void> =
         });
     }
 };
+
+export const deleteHistoryConfig = async(req: Request, res:Response) : Promise<void> =>{
+      try{
+        const authReq = req as AuthenticationRequest;
+
+        const configId = authReq.params.id;
+        const currentUserId = authReq.user?.id;
+
+        if(!currentUserId){
+            res.status(401).json({success: false, message: "Unauthorized account session context."})
+            return ;
+
+        }
+
+        const deleteRecord = await Theme.findOneAndDelete({
+            _id: configId,
+            userId: currentUserId
+        });
+
+        if(!deleteRecord){
+            res.status(404).json({
+                success: false,
+                message: "record not found or unauthorized delete operation attemped."
+            });
+             return;
+        }
+
+         res.status(200).json({
+            success: true,
+            message:"Configuration layout completely cleared fromour cloud library."
+
+         });
+
+
+      } catch(err: any){
+        console.error("Delete controller error:", err.meesage);
+        res.status(500).json({success: false, message:"Internal server deleting configuration."});
+      }
+}

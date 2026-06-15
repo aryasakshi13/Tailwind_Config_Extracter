@@ -54,7 +54,7 @@ export const registerUser = async(req: Request, res: Response): Promise<void> =>
 };
 
 export const loginUser = async(req: Request, res: Response): Promise<void> =>{
-    console.log("rounting working");
+    // console.log("rounting working");
     try{
     
         validateLoginUser(req.body);
@@ -83,8 +83,20 @@ export const loginUser = async(req: Request, res: Response): Promise<void> =>{
             maxAge: 2 * 60 * 60 * 1000
         });
 
-        res.status(200).json({message: `${user.firstName} login Suceessfully` })
-    }catch(err: any ){
+        res.status(200).json({
+            success: true,
+            message: `${user.firstName} login Suceessfully`,
+            token: token,
+            data: {
+                id: user._id,
+                firstName: user.firstName,
+                lastName: user.lastName,
+                email: user.email,
+            }
+        
+        })
+            
+      }catch(err: any ){
         console.log("Login Exception:", err.message);
 
         res.status(400).json({
@@ -125,7 +137,7 @@ export const logoutUser = async(req: Request, res: Response): Promise<void> =>{
          });
 
      }catch(err: any){
-        console.error("Logout Error:", err.meesage);
+        console.error("Logout Error:", err.message);
         res.status(500).json({succes: false, message:"Internal server error during logout."})
      }
 }

@@ -1,5 +1,5 @@
 import {Router} from 'express';
-import { extractTailwindConfig, getUserThemes, saveTailwindConfig } from '../controller/extractController';
+import { deleteHistoryConfig, extractTailwindConfig, getUserThemes, saveTailwindConfig } from '../controller/extractController';
 import { userAuthGuard } from '../middleware/authMiddleware';
 
 
@@ -13,5 +13,6 @@ router.post('/save',userAuthGuard, saveTailwindConfig );
 
 
 router.get('/history',userAuthGuard, getUserThemes);
+router.delete('/history/:id', userAuthGuard, deleteHistoryConfig);
 
 export default router;
