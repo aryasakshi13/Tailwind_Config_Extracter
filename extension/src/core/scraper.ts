@@ -149,7 +149,7 @@
 // // })
 
 
-console.log("Deep Palate Scraper Injected!");
+// console.log("Deep Palate Scraper Injected!");
 
 function rgbToHex(rgbStr: string): string | null {
     const cleanStr = rgbStr.trim().toLowerCase();
@@ -197,6 +197,12 @@ function rgbToHex(rgbStr: string): string | null {
     const styles = window.getComputedStyle(element);
     if (styles.display === 'none' || styles.visibility === 'hidden') return true;
 
+     //  NEW: skip fully transparent elements
+    if (parseFloat(styles.opacity) === 0) return true;
+     
+    // NEW: skip elements hidden via an ancestor's display:none
+    if (element.offsetParent === null && styles.position !== 'fixed') return true;
+
     // Skip tiny elements
     const rect = element.getBoundingClientRect();
     if (rect.width < 5 || rect.height < 5) return true;
@@ -206,13 +212,15 @@ function rgbToHex(rgbStr: string): string | null {
 
 
 function isUsefulColor(hex: string): boolean {
-   const r = parseInt(hex.slice(1, 3), 16);
-    const g = parseInt(hex.slice(3, 5), 16);
-    const b = parseInt(hex.slice(5, 7), 16);
-    const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+//    const r = parseInt(hex.slice(1, 3), 16);
+//     const g = parseInt(hex.slice(3, 5), 16);
+//     const b = parseInt(hex.slice(5, 7), 16);
+//     const brightness = (r * 299 + g * 587 + b * 114) / 1000;
 
     // Skip near-black (under 20) and near-white (over 235)
-    if (brightness < 30) return false;
+    // if (brightness < 30) return false;
+
+    //  if (brightness === 0 && r === g && g === b) return false;
 
     return true;
 }
@@ -233,9 +241,9 @@ function getElementSection(element: HTMLElement): string {
 
         const tag = current.tagName.toLowerCase();
         const role = current.getAttribute('role')?.toLowerCase()|| '';
-        const id = current.id.toLowerCase();
-        const classes = typeof current.className === 'string'? current.className.toLowerCase(): '';
-        const combined = id + ' ' + classes;
+        // const id = current.id.toLowerCase();
+        // const classes = typeof current.className === 'string'? current.className.toLowerCase(): '';
+        // const combined = id + ' ' + classes;
 
         // if(tag === 'nav' || tag === 'header' || id.includes('nav') || id.includes('header') || classes.includes('nav') || classes.includes('header')){
         //      return "Navigation Bar Zone";
@@ -261,11 +269,11 @@ function getElementSection(element: HTMLElement): string {
         // if (/sidebar|aside/.test(combined)) return 'Sidebar';
         // if(/card|feature|pricing|testimonal|cta/.test(combined)) return 'Components' ;
 
-         if (/\bnav\b|navbar|navigation|topbar|menubar|top-bar|site-header/.test(combined)) return 'Navigation';
-        if (/\bhero\b|banner|jumbotron|masthead|splash|intro-section/.test(combined)) return 'Header / Hero';
-        if (/\bfooter\b|foot-|site-footer|page-footer/.test(combined)) return 'Footer';
-        if (/sidebar|\baside\b|side-panel/.test(combined)) return 'Sidebar';
-        if (/\bcard\b|\bbtn\b|\bbadge\b|feature-|pricing-|testimonial/.test(combined)) return 'Components';
+        //  if (/\bnav\b|navbar|navigation|topbar|menubar|top-bar|site-header/.test(combined)) return 'Navigation';
+        // if (/\bhero\b|banner|jumbotron|masthead|splash|intro-section/.test(combined)) return 'Header / Hero';
+        // if (/\bfooter\b|foot-|site-footer|page-footer/.test(combined)) return 'Footer';
+        // if (/sidebar|\baside\b|side-panel/.test(combined)) return 'Sidebar';
+        // if (/\bcard\b|\bbtn\b|\bbadge\b|feature-|pricing-|testimonial/.test(combined)) return 'Components';
 
 
         // if(current.parentElement === document.body){
@@ -278,6 +286,39 @@ function getElementSection(element: HTMLElement): string {
         //     if(index === total - 1) return 'Footer';
         // }
 
+        // const rect = current.getBoundingClientRect();
+        // const scrollTop = window.scrollY || document.documentElement.scrollTop;
+        // const absoluteTop = rect.top + scrollTop;
+        // const pageHeight = Math.max(
+        //     document.body.scrollHeight,
+        //     document.documentElement.scrollHeight
+        // );
+
+        // const isStructural = rect.width > window.innerWidth * 0.5 || rect.width > 600;
+
+        // if (isStructural) {
+        //     if (absoluteTop < 80) return 'Navigation';
+        //     if (absoluteTop < 400) return 'Header / Hero';
+        //     if (absoluteTop > pageHeight - 300) return 'Footer';
+        // }
+
+        current = current.parentElement;
+    }
+    //  return "Main Content" ;
+
+      current = element;
+     while(current && current !== document.body){
+ 
+        const id = current.id.toLowerCase();
+        const classes = typeof current.className === 'string'? current.className.toLowerCase(): '';
+        const combined = id + ' ' + classes;
+ 
+         if (/\bnav\b|navbar|navigation|topbar|menubar|top-bar|site-header/.test(combined)) return 'Navigation';
+        if (/\bhero\b|banner|jumbotron|masthead|splash|intro-section/.test(combined)) return 'Header / Hero';
+        if (/\bfooter\b|foot-|site-footer|page-footer/.test(combined)) return 'Footer';
+        if (/sidebar|\baside\b|side-panel/.test(combined)) return 'Sidebar';
+        if (/\bcard\b|\bbtn\b|\bbadge\b|feature-|pricing-|testimonial/.test(combined)) return 'Components';
+ 
         const rect = current.getBoundingClientRect();
         const scrollTop = window.scrollY || document.documentElement.scrollTop;
         const absoluteTop = rect.top + scrollTop;
@@ -285,20 +326,34 @@ function getElementSection(element: HTMLElement): string {
             document.body.scrollHeight,
             document.documentElement.scrollHeight
         );
-
+ 
         const isStructural = rect.width > window.innerWidth * 0.5 || rect.width > 600;
-
+ 
         if (isStructural) {
             if (absoluteTop < 80) return 'Navigation';
             if (absoluteTop < 400) return 'Header / Hero';
             if (absoluteTop > pageHeight - 300) return 'Footer';
         }
-
+ 
         current = current.parentElement;
      }
      return "Main Content" ;
+
 }
-  
+
+
+function hasVisibleText(element: HTMLElement): boolean {
+    const text = element.textContent?.trim() || '';
+    if (text.length === 0) return false;
+ 
+    const rect = element.getBoundingClientRect();
+    if (rect.width === 0 || rect.height === 0) return false;
+ 
+    return true;
+}
+
+
+
 
 
 
@@ -319,7 +374,7 @@ function runPageColorScan(): Record<string, string[]> {
 
    sections.forEach(s => {sectionedData[s]= new Set<string>();});
 
-   const propsToScan = ["backgroundColor", 'color'];
+//    const propsToScan = ["backgroundColor", 'color'];
 
     const allElements = document.querySelectorAll("*");
     allElements.forEach((element) => {
@@ -334,19 +389,44 @@ function runPageColorScan(): Record<string, string[]> {
 
         try {
             const styles = window.getComputedStyle(element);
-              propsToScan.forEach(prop => {
-                const val = styles.getPropertyValue(
-                    prop.replace(/([A-Z])/g, '-$1').toLowerCase()
-                );
-                if (val) {
-                    const hex = rgbToHex(val);
+
+            //   propsToScan.forEach(prop => {
+            //     const val = styles.getPropertyValue(
+            //         prop.replace(/([A-Z])/g, '-$1').toLowerCase()
+            //     );
+            //     if (val) {
+            //         const hex = rgbToHex(val);
+            //         if (hex && isUsefulColor(hex)) {
+            //             sectionedData[sectionName]?.add(hex);
+            //         }
+            //     }
+            // });
+            
+
+            const bgVal = styles.getPropertyValue('background-color');
+            if (bgVal) {
+                const hex = rgbToHex(bgVal);
+                if (hex && isUsefulColor(hex)) {
+                    sectionedData[sectionName]?.add(hex);
+                }
+            }
+
+
+            if (hasVisibleText(htmlElement)) {
+                const colorVal = styles.getPropertyValue('color');
+                if (colorVal) {
+                    const hex = rgbToHex(colorVal);
                     if (hex && isUsefulColor(hex)) {
                         sectionedData[sectionName]?.add(hex);
                     }
                 }
-            });
+            }
+
+
         } catch (e) {}
     });
+
+    
 
     const finalPayload: Record<string, string[]> = {};
     for (const [zone, colorSet] of Object.entries(sectionedData)) {
@@ -602,6 +682,26 @@ function runPageColorScan(): Record<string, string[]> {
         // .map(v => `${v}px`)
         .slice(0, 15);
   }
+
+  function settleScrollState(): Promise<void> {
+    return new Promise((resolve) => {
+        const originalY = window.scrollY;
+ 
+        window.scrollTo(0, document.body.scrollHeight);
+ 
+        // give lazy-mounted content (footers behind IntersectionObserver,
+        // infinite-scroll triggers, etc.) a moment to actually render
+        setTimeout(() => {
+            window.scrollTo(0, 0);
+ 
+            // give the navbar's scroll-listener time to revert its
+            // "scrolled" class/styles back to the top-of-page state
+            setTimeout(() => {
+                resolve();
+            }, 150);
+        }, 250);
+    });
+}
 
 
 chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {

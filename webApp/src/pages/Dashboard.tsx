@@ -18,7 +18,16 @@ const HistoryDashboard: React.FC = () => {
     useEffect(() => {
         const fetchWorkspaceHistory = async () => {
             try {
-                const response = await fetch('http://localhost:5000/extractor/history');
+
+                const token = localStorage.getItem('token');
+
+                const response = await fetch('http://localhost:5000/extractor/history' ,{
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization' : `Bearer ${token}` 
+                    }
+                });
                 const json = await response.json();
                 if (json.success) {
                     setThemes(json.data);
@@ -216,8 +225,8 @@ const HistoryDashboard: React.FC = () => {
                         <p className="text-slate-600 text-xs">Try adjusting your search keywords or capture a new space via your utility panel extension.</p>
                     </div>
                 ) : (
-                    <div className='grid grid-cols-1 md: grid-cols-2 lg:grid:-cols-3 gap-6'>
-                        {themes.map((theme) => (
+                    <div className='grid grid-cols-1 md:grid-cols-2 lg:grid:-cols-3 gap-6'>
+                        {filteredThemes.map((theme) => (
                             <div key={theme._id}
                                 className='bg-slate-900 border border-slate-800 hover:border-slate-700 transition-all duration-200 rounded-xl p-5 shadow-xl flex flex-col justify-between'
                             >

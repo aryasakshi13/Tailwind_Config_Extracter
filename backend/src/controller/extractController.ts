@@ -184,14 +184,39 @@ export const getUserThemes = async(req: Request, res: Response): Promise<void> =
 
         const targetUserId = authReq.user?._id;
 
-        const userSavedThemes = await Theme.find({userId: targetUserId}). sort({createdAt: -1});
+        const page = parseInt(authReq.query.page as string) || 1;
+        const limit = parseInt(authReq.query.limit as string) || 6;
 
-        res.status(200).json({
+        const skipOffset = (page - 1) * limit;
+
+        // const userSavedThemes = await Theme.find({userId: targetUserId}). sort({createdAt: -1});
+
+        const [userSavedThemes, totalItemsCount] = await Promise.all([
+            Theme.find({ userId: targetUserId })
+                .sort({ createdAt: -1 })
+                .skip(skipOffset)
+                .limit(limit),
+            Theme.countDocuments({ userId: targetUserId })
+        ]);
+
+         const totalPagesCount = Math.ceil(totalItemsCount / limit);
+
+
+
+       res.status(200).json({
             success: true,
-            count:userSavedThemes.length,
             message: "Saved configuration history workspace fetched successfully!",
+            pagination: {
+                totalItems: totalItemsCount,
+                totalPages: totalPagesCount,
+                currentPage: page,
+                limit: limit,
+                hasNextPage: page < totalPagesCount,
+                hasPrevPage: page > 1
+            },
             data: userSavedThemes
         });
+        
     }catch(err: any){
         console.error("fetch history controler error", err.message);
         res.status(500).json({
