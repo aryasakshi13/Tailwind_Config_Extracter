@@ -14,6 +14,7 @@ const HistoryDashboard: React.FC = () => {
     const [loading, setLoading] = useState<boolean>(true);
     const [searchQuery, setSearchQuery] = useState<string>('');
     const [selectedTheme, setSelectedTheme] = useState<ThemeRecord | null>(null);
+    const [copied, setCopied] = useState<boolean>(false);
 
     useEffect(() => {
         const fetchWorkspaceHistory = async () => {
@@ -88,7 +89,7 @@ const HistoryDashboard: React.FC = () => {
                                 Editing Architecture: <span className="text-emerald-400 font-mono font-medium">{selectedTheme.siteName}</span>
                             </h2>
                 </div>
-                   <button 
+                   {/* <button 
                         onClick={() => {
                             navigator.clipboard.writeText(JSON.stringify(selectedTheme.sections, null, 2));
                             alert("Design tokens copied directly to clipboard tracking buffers!");
@@ -96,7 +97,53 @@ const HistoryDashboard: React.FC = () => {
                         className="bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold text-xs px-4 py-2 rounded-lg transition-colors duration-150"
                     >
                         Copy Design Tokens
+                    </button> */}
+                    
+
+                       <button 
+                            onClick={async () => {
+                                try {
+                                    // 🌟 Await the asynchronous write operation to confirm it actually succeeds
+                                    // await navigator.clipboard.writeText(JSON.stringify(selectedTheme.sections, null, 2));
+                                    // alert("Design tokens copied directly to clipboard tracking buffers!");
+                                     
+                                    await navigator.clipboard.writeText(formattedCodeValue);
+                                    // 2. Set inline state feedback instead of running focus-breaking alert() modules
+                                    setCopied(true);
+                                    setTimeout(() => setCopied(false), 2000);
+                                    
+                                } catch (err) {
+                                    console.error("Clipboard write failure:", err);
+                                    
+                                    // Fallback for browsers with strict cross-origin clipboard permissions
+                                    const textarea = document.createElement("textarea");
+                                    // textarea.value = JSON.stringify(selectedTheme.sections, null, 2);
+                                     textarea.value = formattedCodeValue;
+                                    document.body.appendChild(textarea);
+                                    textarea.select();
+                                    document.execCommand("copy");
+                                    document.body.removeChild(textarea);
+                                    
+                                    // alert("Copied via legacy fallback buffers!");
+
+                                    setCopied(true);
+                                     setTimeout(() => setCopied(false), 2000);
+                                }
+                            }}
+                        //     className="bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold text-xs px-4 py-2 rounded-lg transition-colors duration-150"
+                        // >
+                        //     Copy Design Tokens
+
+                            className={`font-bold text-xs px-4 py-2 rounded-lg transition-all duration-200 ${
+                                    copied 
+                                    ? "bg-emerald-600 text-white scale-[0.98]" 
+                                    : "bg-emerald-500 hover:bg-emerald-600 text-slate-950"
+                                }`}
+                            >
+                                {copied ? "✓ Copied to Clipboard!" : "Copy Design Tokens"}
                     </button>
+
+
             </header>
              
              <div className="flex-1 grid grid-cols-1 lg:grid-cols-2">
@@ -118,7 +165,7 @@ const HistoryDashboard: React.FC = () => {
                                 folding: true,
                                 lineNumbers: 'on',
                                 scrollbar: { verticalScrollbarSize: 8 },
-                                readOnly: false // Allows dynamic modifications right inside the editor
+                                readOnly: true  // Secures the sandbox panel as a read-only architecture preview layer
                             }}
                         />
                     </div>
@@ -163,7 +210,7 @@ const HistoryDashboard: React.FC = () => {
                          <footer className="border-t border-slate-900 pt-4 text-[11px] text-slate-600 text-center font-medium">
                             System Design Workspace Architecture Layer • Synchronized Extension Environment
                         </footer>
-                    </div>
+                    </div> 
                   
              </div>
 

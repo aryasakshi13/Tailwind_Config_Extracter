@@ -35,22 +35,44 @@ function buildFontSizeKey(s:FontSizeToken) : string {
     "Sidebar": 'sidebar'
    };
 
-   const elementName: Record<string, string> = {
-    'h1' : 'title',
-    'h2': 'heading',
-    'h3': 'subheading',
-    'h4': 'subheading',
-    'p': 'text',
-    'span': 'label',
-    'a': 'link',
-    'button': 'btn',
-    'li': 'list',
-     'label': 'label',
-   };
+  //  const elementName: Record<string, string> = {
+  //   'h1' : 'title',
+  //   'h2': 'heading',
+  //   'h3': 'subheading',
+  //   'h4': 'subheading',
+  //   'p': 'text',
+  //   'span': 'label',
+  //   'a': 'link',
+  //   'button': 'btn',
+  //   'li': 'list',
+  //    'label': 'label',
+  //  };
 
    const section = sectionShort[s.section] || 'text';
-    const element = elementName[s.element] || s.element;
-    return `${section}-${element}`;
+    // const element = elementName[s.element] || s.element;
+    // return `${section}-${element}`;
+
+    
+    
+    // 🧠 1. Convert the string value (e.g., "48px") into a pure mathematical number (48)
+    const numericSize = parseFloat(s.value);
+
+    // 🧠 2. Run the size-range evaluator to build consistent typographic token keys
+    let structuralRole = 'body-base';
+
+    if (numericSize >= 56)       structuralRole = 'display-xl';  // Huge feature titles
+    else if (numericSize >= 40)  structuralRole = 'display-lg';  // Main layout headers
+    else if (numericSize >= 32)  structuralRole = 'heading-xl';  // Content section headers
+    else if (numericSize >= 24)  structuralRole = 'heading-lg';  // Article titles
+    else if (numericSize >= 20)  structuralRole = 'heading-md';  // Card titles or subtitles
+    else if (numericSize >= 16)  structuralRole = 'body-base';   // Standard reading/paragraph text
+    else if (numericSize >= 14)  structuralRole = 'body-sm';     // Secondary labels or navigation links
+    else                         structuralRole = 'caption';     // Fine print, timestamps, and footers
+
+    // 🧠 3. Combine them to generate clear configuration utility keys
+    return `${section}-${structuralRole}`;
+
+
 }
 
 function buildSpacingKey(s: SpacingToken): string {
