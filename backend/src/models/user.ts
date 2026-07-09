@@ -25,7 +25,8 @@ const UserSchema = new Schema<IUser, UserModel, IUserMethods>({
      },
      lastName :{
         type: String,
-        required: [true, 'lastName is required'],
+      //   required: [false, 'lastName is required'],
+        required: false,
         maxLength: 50,
      },
      email: {

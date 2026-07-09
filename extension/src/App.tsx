@@ -198,6 +198,27 @@ function buildSpacingKey(s: SpacingToken): string {
 // }
 
 //  CopytoclipBoard feeature 
+
+async function getAuthTokenFromDashboard(): Promise<string | null> {
+  try {
+     // Queries your running local dashboard tab
+     const tabs = await chrome.tabs.query({ url: "http://localhost:5174/*" }); 
+     if (!tabs || tabs.length === 0) return null;
+
+     // Securely extracts the token you saved during login
+     const result = await chrome.scripting.executeScript({
+       target: { tabId: tabs[0].id! },
+       func: () => localStorage.getItem('token'), 
+     });
+
+     return result[0]?.result as string || null;
+  } catch (err) {
+     console.error("Failed to read token from dashboard:", err);
+     return null;
+  }
+}
+
+
 async function copyToClipboard(text: string) {
   try {
     await navigator.clipboard.writeText(text);
@@ -329,6 +350,16 @@ function App() {
       setIsSaving(true);
 
       try{
+
+          const sessionToken = await getAuthTokenFromDashboard();
+
+           // 🌟 SECURITY GUARD: If no token is found, stop the request and alert the user
+            if (!sessionToken) {
+              alert("Cloud Save Failed: No active login session found. Please open your Web Dashboard tab, log in, and try again!");
+              setIsSaving(false);
+              return;
+            }
+
         const  formattedSections : Record<string, any>  = {};
          Object.keys(tokens.sections).forEach((sectionName)=>{
           const cleanName = sectionName.toLowerCase().replace(/[^a-z0-9]+/g, '-') .replace(/^-|-$/g, '');
@@ -352,7 +383,10 @@ function App() {
          const response = await fetch(`${BACKEND_URL}/save`,{
           
              method:'POST',
-             headers:{'Content-Type': 'application/json'},
+             headers:{
+              'Content-Type': 'application/json',
+               'Authorization': `Bearer ${sessionToken}`
+            },
              body: JSON.stringify({
                siteUrl: tokens.sourceUrl || "Unknown Target Site",
                siteName: (tokens.sourceUrl || "Unnamed Site") + " Theme Workspace",

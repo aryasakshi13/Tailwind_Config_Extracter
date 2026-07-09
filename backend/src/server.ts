@@ -14,11 +14,19 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000 ;
 
-
+ const allowedOrigins = [
+  'http://localhost:5173', // Alternative Vite local development port
+  'http://localhost:5174', // 👈 Your current React webApp dashboard port!
+];
 
 app.use(cors({ origin: true, credentials: true }));
 app.use(express.json());
 app.use(cookieParser());
+
+app.use((req, res, next) => {
+    console.log(`📡 Server received a request: [${req.method}] to path: "${req.url}"`);
+    next();
+});
 app.use((req, res, next) => {
     console.log(`\n🚨 CAMERA WATCHING: ${req.method} ${req.url}`);
     console.log(`Headers Auth:`, req.headers.authorization || "❌ NONE");
@@ -33,7 +41,7 @@ app.use((req, res, next) => {
 //     next();
 // });
 
-app.use('/auth', authRoutes);
+app.use('/api/auth', authRoutes);
 // app.use('/extractor', userAuthGuard, extractorRoutes)
 
 app.use('/extractor', extractorRoutes);

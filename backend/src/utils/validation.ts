@@ -15,8 +15,8 @@ interface LoginInput {
 export const validateSignupUser = (data:ValidationInput): void =>{
     const {firstName, lastName, email, password} = data;
 
-    if(!firstName || !lastName){
-        throw new Error("Please enter both your first Name and Last Name");
+    if(!firstName ){
+        throw new Error("Please enter both your first Name ");
     }
 
     else if(!email || !validator.isEmail(email)){

@@ -44,10 +44,12 @@ export const registerUser = async(req: Request, res: Response): Promise<void> =>
         });
         
     }catch(err: any){
-        console.log('Error:', err.message);
+        // console.log('Error:', err.message);
+         console.error("❌ Database Validation Failed:", err.message);
        
         res.status(400).json({
             success: false,
+            errorType: err.name,
             message: err.message
         });
     }

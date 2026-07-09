@@ -2,7 +2,8 @@ import React, {useState} from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const Signup: React.FC = () =>{
-    const [name, setName] = useState('');
+    const [firstName, setFirstName] = useState('');
+    
     const[email, setemail] = useState('');
     const[password, setPassword] = useState('');
     const[error, setError] = useState('');
@@ -20,7 +21,7 @@ const Signup: React.FC = () =>{
                 const response = await fetch('http://localhost:5000/api/auth/signup', {
                     method : 'POST',
                     headers : {'Content-Type': 'application/json'},
-                    body: JSON.stringify({name, email, password}),
+                    body: JSON.stringify({firstName, email, password}),
                 });
 
                 const data = await response.json();
@@ -58,8 +59,10 @@ const Signup: React.FC = () =>{
                     <input
                       type="text"
                        placeholder="john Deo"
-                       value= {name}
-                       onChange={(e) => setName(e.target.value)}
+                    //    value= {name}
+                        value= {firstName}
+                    //    onChange={(e) => setName(e.target.value)}
+                        onChange={(e) => setFirstName(e.target.value)}
                        className='w-full bg-slate-950 border border-slate-500 focus:borderemerald-500/50 rounded-xl py-2.5 text-sm text-slate-100 placeholder-slate-600 outline-none transition-all duration-200'
                        required
                     />

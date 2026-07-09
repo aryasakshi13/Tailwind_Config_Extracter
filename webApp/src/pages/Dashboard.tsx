@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Editor from '@monaco-editor/react';
+import { useNavigate } from 'react-router-dom';
 
 interface ThemeRecord {
     _id: string;
@@ -15,6 +16,8 @@ const HistoryDashboard: React.FC = () => {
     const [searchQuery, setSearchQuery] = useState<string>('');
     const [selectedTheme, setSelectedTheme] = useState<ThemeRecord | null>(null);
     const [copied, setCopied] = useState<boolean>(false);
+
+     const navigate = useNavigate();
 
     useEffect(() => {
         const fetchWorkspaceHistory = async () => {
@@ -63,6 +66,15 @@ const HistoryDashboard: React.FC = () => {
         );
     }
 
+   
+
+    const handleLogout = () => {
+        
+        localStorage.removeItem('token');
+        
+        navigate('/login');
+    };
+
 
     //  Monaco workspace sandbox
     if(selectedTheme){
@@ -73,7 +85,7 @@ const HistoryDashboard: React.FC = () => {
        }, null, 2);
 
        return(
-          <div className='min-h-screen bg-slate-950 text-slate-100 flex flex-col font sans'>
+          <div className='min-h-screen w-full bg-slate-950 text-slate-100 flex flex-col font sans'>
 
             {/* View Header nav */}
             <header className="h-16 border-b border-slate-900 bg-slate-900/40 px-6 flex items-center justify-between backdrop-blur-sm">
@@ -99,7 +111,7 @@ const HistoryDashboard: React.FC = () => {
                         Copy Design Tokens
                     </button> */}
                     
-
+                    <div className="flex items-center gap-3">     
                        <button 
                             onClick={async () => {
                                 try {
@@ -142,8 +154,10 @@ const HistoryDashboard: React.FC = () => {
                             >
                                 {copied ? "✓ Copied to Clipboard!" : "Copy Design Tokens"}
                     </button>
+                       
+                       
 
-
+                    </div>
             </header>
              
              <div className="flex-1 grid grid-cols-1 lg:grid-cols-2">
@@ -220,7 +234,7 @@ const HistoryDashboard: React.FC = () => {
     }
 
     return (
-        <div className=' = "min-h-screen bg-slate-950 text-slate-100 p-8 font-sans'>
+        <div className = "min-h-screen w-full bg-slate-950 text-slate-100 p-8 font-sans">
             <div className='max-w-7xl mx-auto'>
 
                 {/* Section : top Header Area*/}
@@ -234,6 +248,8 @@ const HistoryDashboard: React.FC = () => {
                             Review, manage, and extract Tailwind css tokens from your synchronized web workspaces.
                         </p>
                     </div>
+
+                <div className="flex items-center gap-4 w-full md:w-auto">
                     <div className="relative w-full md:w-80">
                         <input
                             type="text"
@@ -250,8 +266,18 @@ const HistoryDashboard: React.FC = () => {
                                 Clear
                             </button>
                         )}
+                        </div>
+
+                          <button
+                            onClick={handleLogout}
+                            className="px-4 py-2.5 bg-red-500/10 hover:bg-red-500/20 text-red-400 text-xs font-bold uppercase tracking-wider rounded-xl border border-red-500/20 transition-all duration-150 whitespace-nowrap"
+                        >
+                            Sign Out
+                        </button>
 
                     </div>
+
+
                 </header>
                 {/* plateform matrix  state banner */}
                 <section className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
