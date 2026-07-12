@@ -16,10 +16,28 @@ const PORT = process.env.PORT || 5000 ;
 
  const allowedOrigins = [
   'http://localhost:5173', // Alternative Vite local development port
-  'http://localhost:5174', // 👈 Your current React webApp dashboard port!
+  'http://localhost:5174', 
+  'http://localhost:5175',
+   'chrome-extension://bdiacbckjfpadicppkookfjolaohdmpl'    // 👈 Your current React webApp dashboard port!
 ];
 
 app.use(cors({ origin: true, credentials: true }));
+
+
+// app.use(cors({
+//   origin: function (origin, callback) {
+//      console.log(`🕵️‍♂️ CORS Audit -> Incoming Origin: "${origin}"`);
+//     // Allow requests with no origin (like Postman, curl, or initial mobile requests)
+//     // or if the incoming origin matches one of our trusted workspace ports
+//     if (!origin || allowedOrigins.includes(origin)) {
+//       callback(null, true);
+//     } else {
+//       console.log(`❌ CORS Security Blocked an unauthorized origin: ${origin}`);
+//       callback(new Error('Not allowed by secure CORS core infrastructure'));
+//     }
+//   },
+//   credentials: true // Required to pass cookies, tokens, and authorization headers safely
+// }));
 app.use(express.json());
 app.use(cookieParser());
 
@@ -42,9 +60,9 @@ app.use((req, res, next) => {
 // });
 
 app.use('/api/auth', authRoutes);
-// app.use('/extractor', userAuthGuard, extractorRoutes)
+app.use('/extractor', userAuthGuard, extractorRoutes)
 
-app.use('/extractor', extractorRoutes);
+// app.use('/extractor', extractorRoutes);
 
 // app.post("/auth/login", (re,res)=>{
 

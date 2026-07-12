@@ -8,8 +8,17 @@
     "activeTab",
     "scripting",
     "storage",
-    "sidePanel"
+    "sidePanel",
+    "tabs"
   ],
+   
+    "host_permissions": [
+    "http://localhost:5173/*",
+    "http://localhost:5174/*",
+    "http://localhost:5175/*",
+    "<all_urls>" 
+  ],
+
     "background": {
         "service_worker": "src/core/background.ts",
         "type": "module"

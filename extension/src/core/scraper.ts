@@ -211,7 +211,7 @@ function rgbToHex(rgbStr: string): string | null {
 }  
 
 
-function isUsefulColor(hex: string): boolean {
+function isUsefulColor(_hex: string): boolean {
 //    const r = parseInt(hex.slice(1, 3), 16);
 //     const g = parseInt(hex.slice(3, 5), 16);
 //     const b = parseInt(hex.slice(5, 7), 16);
@@ -683,25 +683,25 @@ function runPageColorScan(): Record<string, string[]> {
         .slice(0, 15);
   }
 
-  function settleScrollState(): Promise<void> {
-    return new Promise((resolve) => {
-        const originalY = window.scrollY;
+//   function settleScrollState(): Promise<void> {
+//     return new Promise((resolve) => {
+//         const originalY = window.scrollY;
  
-        window.scrollTo(0, document.body.scrollHeight);
+//         window.scrollTo(0, document.body.scrollHeight);
  
-        // give lazy-mounted content (footers behind IntersectionObserver,
-        // infinite-scroll triggers, etc.) a moment to actually render
-        setTimeout(() => {
-            window.scrollTo(0, 0);
+//         // give lazy-mounted content (footers behind IntersectionObserver,
+//         // infinite-scroll triggers, etc.) a moment to actually render
+//         setTimeout(() => {
+//             window.scrollTo(0, 0);
  
-            // give the navbar's scroll-listener time to revert its
-            // "scrolled" class/styles back to the top-of-page state
-            setTimeout(() => {
-                resolve();
-            }, 150);
-        }, 250);
-    });
-}
+//             // give the navbar's scroll-listener time to revert its
+//             // "scrolled" class/styles back to the top-of-page state
+//             setTimeout(() => {
+//                 resolve();
+//             }, 150);
+//         }, 250);
+//     });
+// }
 
 
 chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {

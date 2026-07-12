@@ -8,11 +8,14 @@ interface FontSizeToken {
     element: string;
 }
 
+
+
 interface SpacingToken {
     value: string;
     section: string;
     property: string;
 }
+
 
 
 interface DesignTokens {
@@ -22,6 +25,8 @@ interface DesignTokens {
   spacing: SpacingToken[];
   sourceUrl:string;
 }
+
+
 
 const BACKEND_URL = "http://localhost:5000/extractor";
 
@@ -75,6 +80,8 @@ function buildFontSizeKey(s:FontSizeToken) : string {
 
 }
 
+
+
 function buildSpacingKey(s: SpacingToken): string {
   const sectionShort: Record<string, string> ={
      'Navigation': 'nav',
@@ -87,6 +94,8 @@ function buildSpacingKey(s: SpacingToken): string {
   const section = sectionShort[s.section] || 'layout';
   return `${section}-${s.property}`;
 }
+
+
 
 // function generateTailwindConfig(tokens: DesignTokens): string {
 
@@ -197,21 +206,61 @@ function buildSpacingKey(s: SpacingToken): string {
 //   URL.revokeObjectURL(url);
 // }
 
+
+
+
 //  CopytoclipBoard feeature 
 
 async function getAuthTokenFromDashboard(): Promise<string | null> {
   try {
      // Queries your running local dashboard tab
-     const tabs = await chrome.tabs.query({ url: "http://localhost:5174/*" }); 
-     if (!tabs || tabs.length === 0) return null;
+    //  const tabs = await chrome.tabs.query({ url: ["http://localhost:5173/*", "http://localhost:5174/*"  ]}); 
+    //  if (!tabs || tabs.length === 0) return null;
 
+     const allTabs = await chrome.tabs.query({});
+
+     const dashboardTabs = allTabs.filter(tab => 
+      tab.url && (tab.url.includes("localhost:5173") || tab.url.includes("localhost:5174"))
+    );
+
+    if (dashboardTabs.length === 0) {
+      console.warn("⚠️ No active localhost dashboard tabs were detected open in this browser window.");
+      return null;
+    }
+     
+
+  // for (const tab of tabs) {
+  //   if (!tab.id) continue;
+
+     for (const tab of dashboardTabs) {
+      if (!tab.id) continue;
+         
+    try {
      // Securely extracts the token you saved during login
      const result = await chrome.scripting.executeScript({
-       target: { tabId: tabs[0].id! },
+      //  target: { tabId: tabs[0].id! },
+      target: { tabId: tab.id },
        func: () => localStorage.getItem('token'), 
      });
 
-     return result[0]?.result as string || null;
+    //  return result[0]?.result as string || null;
+
+       const token = result[0]?.result as string || null;
+             
+             // If this specific tab contains a valid token, return it immediately!
+             if (token) {
+                 console.log(`✅ Session passport found in Tab ID: ${tab.id}`);
+                 return token;
+             }
+         } catch (scriptErr) {
+             // Silently skip any tabs that are still loading or restricted
+             console.warn(`Skipping tab ${tab.id}:`, scriptErr);
+         }
+     }
+
+     return null;
+
+
   } catch (err) {
      console.error("Failed to read token from dashboard:", err);
      return null;
@@ -344,6 +393,7 @@ function App() {
 
     };
 
+
     const handleSavetoCloud = async() =>{
        
       if(!tokens) return ;
@@ -355,7 +405,15 @@ function App() {
 
            // 🌟 SECURITY GUARD: If no token is found, stop the request and alert the user
             if (!sessionToken) {
-              alert("Cloud Save Failed: No active login session found. Please open your Web Dashboard tab, log in, and try again!");
+              // alert("Cloud Save Failed: No active login session found. Please open your Web Dashboard tab, log in, and try again!");
+
+              alert("Authentication Required: Opening your Creator Vault dashboard. Please log in or sign up, then try saving again!");
+            
+                if (typeof chrome !== 'undefined' && chrome.tabs) {
+                    // Automatically opens the login panel tab for the user!
+                    // Change the port to match whichever one your Vite application is using right now
+                    chrome.tabs.create({ url: "http://localhost:5173/login" }); 
+                }
               setIsSaving(false);
               return;
             }
@@ -394,6 +452,19 @@ function App() {
              }),
             
          });
+
+         if (!response.ok) {
+            const errorHtml = await response.text();
+            console.error("🚨 CRITICAL BACKEND STACK TRACE:\n", errorHtml);
+            
+            // Try to extract just the error message text from the Express HTML template
+            const match = errorHtml.match(/<pre>([\s\S]*?)<\/pre>/);
+            const cleanError = match ? match[1] : "Internal Server Error";
+            
+            alert(`Server Crash (${response.status}):\n${cleanError.split('<br>')[0]}`);
+            setIsSaving(false);
+            return;
+          }
 
           const result  = await response.json();
 
