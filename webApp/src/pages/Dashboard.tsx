@@ -25,7 +25,8 @@ const HistoryDashboard: React.FC = () => {
 
                 const token = localStorage.getItem('token');
 
-                const response = await fetch('http://localhost:5000/extractor/history' ,{
+                // const response = await fetch('http://localhost:5000/extractor/history' ,{
+                const response = await fetch('https://tailwind-config-extracter-1.onrender.com/extractor/history' ,{
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
