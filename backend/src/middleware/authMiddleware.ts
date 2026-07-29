@@ -10,6 +10,10 @@ export interface AuthenticationRequest extends Request {
 export const userAuthGuard = async (req: AuthenticationRequest, res: Response, next: NextFunction):Promise<void> =>{
   console.log("👉 GUARD IS RUNNING! Incoming Cookies:", req.cookies);
    try{
+
+     console.log("========== AUTH GUARD ==========");
+      console.log("Authorization Header:", req.headers.authorization);
+      console.log("Cookies:", req.cookies);
    
       const authHeader = req.headers.authorization;
      let token = authHeader && authHeader.startsWith('Bearer ') ? authHeader.split(' ')[1] : null;

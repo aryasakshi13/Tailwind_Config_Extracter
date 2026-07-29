@@ -81,6 +81,39 @@ TAILWIND-CONFIG-EXTRACTOR/
     ├── postcss.config.js
     └── tailwind.config.js
 
-    ```
+ ```
+
+# Getting Started
+Prerequisites
+ Ensure you have the following installed locally:
+
+Node.js: v18.0.0 or higher
+
+npm: v9.0.0 or higher
+
+MongoDB: Local MongoDB server or a cloud Atlas connection URI
+
+Chrome Browser: Chromium-based browser supporting Manifest V3 extensions
+
+```bash
+# 1. Clone the repository
+git clone https://github.com/your-username/tailwind-config-extractor.git
+
+# 2. Navigate into the project folder
+cd tailwind-config-extractor
+
+# 3. Install dependencies for the backend
+cd backend
+npm install
+
+# 4. Install dependencies for the extension
+cd ../extension
+npm install
+
+# 5. Install dependencies for the webApp
+cd ../webApp
+npm install
+```
+
 
     

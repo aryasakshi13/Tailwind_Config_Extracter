@@ -28,7 +28,13 @@ interface DesignTokens {
 
 
 
-const BACKEND_URL = "http://localhost:5000/extractor";
+// const BACKEND_URL = "http://localhost:5000/extractor";
+ const BACKEND_URL = "http://localhost:5000";
+
+// 🌟 Swap the endpoint path to your cloud server tree!
+// const BACKEND_URL = "https://tailwind-config-extractor-1.onrender.com/extractor";
+
+const PRODUCTION_DASHBOARD_URL = "https://tailwind-config-extracter.vercel.app";
 
 function buildFontSizeKey(s:FontSizeToken) : string {
    const sectionShort : Record<string, string> = {
@@ -315,14 +321,28 @@ function App() {
 
 
   const pingWebpageDom = async () => {
+      console.log("1. Scan button clicked");
     setIsScanning(true);
     const [activeTab] = await chrome.tabs.query({ active: true, currentWindow: true });
     if (!activeTab?.id) { setIsScanning(false); return; }
 
+        console.log("2. Active Tab:", activeTab);
+
      const sourceUrl = activeTab.url ? new URL(activeTab.url).hostname : 'unknown';
 
-
+      console.log("3. Sending PING_DOM...");
     chrome.tabs.sendMessage(activeTab.id, { action: "PING_DOM" }, (response) => {
+             console.log("4. Callback reached"); 
+      
+           if (chrome.runtime.lastError) {
+              console.error("SendMessage Error:", chrome.runtime.lastError.message);
+              setIsScanning(false);
+              return;
+            }
+
+            console.log("Response:", response);
+
+
       if (response?.status === "success") {
         setToken({
           sections: response.sections,
@@ -366,7 +386,7 @@ function App() {
              sections: sectionsPayload
           };
 
-          const response = await fetch(`${BACKEND_URL}/extract`,{
+          const response = await fetch(`${BACKEND_URL}/extractor/extract`,{
              method:'POST',
              headers:{'Content-Type': 'application/json'},
              body: JSON.stringify(payload),
@@ -412,7 +432,14 @@ function App() {
                 if (typeof chrome !== 'undefined' && chrome.tabs) {
                     // Automatically opens the login panel tab for the user!
                     // Change the port to match whichever one your Vite application is using right now
-                    chrome.tabs.create({ url: "http://localhost:5173/login" }); 
+                    // chrome.tabs.create({ url: "http://localhost:5173/login" }); 
+
+                      const isDevelopment = window.location.href.includes('localhost');
+                        const targetLoginUrl = isDevelopment 
+                          ? "http://localhost:5173/login" 
+                          : `${PRODUCTION_DASHBOARD_URL}/login`;
+
+                        chrome.tabs.create({ url: targetLoginUrl });
                 }
               setIsSaving(false);
               return;
@@ -438,7 +465,8 @@ function App() {
           }
 
          });
-         const response = await fetch(`${BACKEND_URL}/save`,{
+         console.log("Session Token:", sessionToken);
+         const response = await fetch(`${BACKEND_URL}/extractor/save`,{
           
              method:'POST',
              headers:{

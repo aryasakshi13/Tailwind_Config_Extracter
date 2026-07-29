@@ -151,6 +151,8 @@
 
 // console.log("Deep Palate Scraper Injected!");
 
+console.log("✅ Content script loaded:", window.location.href);
+
 function rgbToHex(rgbStr: string): string | null {
     const cleanStr = rgbStr.trim().toLowerCase();
 

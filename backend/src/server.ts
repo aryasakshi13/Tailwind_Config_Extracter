@@ -60,7 +60,7 @@ app.use((req, res, next) => {
 // });
 
 app.use('/api/auth', authRoutes);
-app.use('/extractor', userAuthGuard, extractorRoutes)
+app.use('/extractor',  extractorRoutes)
 
 // app.use('/extractor', extractorRoutes);
 
